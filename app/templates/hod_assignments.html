@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Course Assignments</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <h2>All Course Assignments</h2>
+
+  <table class="table table-bordered table-striped mt-4">
+    <thead>
+      <tr>
+        <th>Course</th>
+        <th>Faculty</th>
+        <th>Session</th>
+        <th>Assigned On</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for a in assignments %}
+        <tr>
+          <td>{{ a.course.code }} - {{ a.course.name }}</td>
+          <td>{{ a.faculty.username }}</td>
+          <td>{{ a.session.name }}</td>
+          <td>{{ a.assigned_on.strftime('%Y-%m-%d') }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

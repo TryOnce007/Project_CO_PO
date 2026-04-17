@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add Course Outcome (CO)</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <style>
+    .fade-out {
+      opacity: 0;
+      transition: opacity 0.5s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h2 class="mb-4">Add Course Outcome (CO)</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category.startswith('add_co_') %}
+            {% set alert_type = category.replace('add_co_', '') %}
+            <div class="alert alert-{{ alert_type }} alert-dismissible fade show auto-dismiss" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+      <div class="mb-3">
+        <label for="description" class="form-label">CO Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label for="course_id" class="form-label">Select Course</label>
+        <select class="form-select" id="course_id" name="course_id" required>
+          <option value="">-- Select a Course --</option>
+          {% for course in courses %}
+            <option value="{{ course.id }}">{{ course.name }} ({{ course.code }})</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Add CO</button>
+      <a href="{{ url_for('auth.index') }}" class="btn btn-primary">Back</a>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    setTimeout(() => {
+      const alerts = document.querySelectorAll('.auto-dismiss');
+      alerts.forEach(alert => {
+        alert.classList.remove('show');
+        alert.classList.add('fade-out');
+        setTimeout(() => alert.remove(), 500); 
+      });
+    }, 3000);
+  </script>
+</body>
+</html>
