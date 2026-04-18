@@ -5,155 +5,143 @@
   <title>Home | CO-PO Attainment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
   <style>
     body {
-      background: #f0f2f5;
+      background: linear-gradient(135deg, #eef2f7, #dbe6f6);
       font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .navbar {
-      background-color: #007bff;
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
-    .nav-link, .navbar-brand {
-      color: white !important;
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
     }
 
     .hero-section {
       text-align: center;
-      padding: 80px 20px;
+      padding: 90px 20px;
     }
 
     .hero-section h1 {
-      font-size: 2.8rem;
-      font-weight: bold;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #222;
     }
 
     .hero-section p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       color: #555;
-      margin-top: 10px;
+      margin-top: 12px;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    .btn-primary {
-      padding: 12px 30px;
-      font-size: 1rem;
-    }
-
-    /* Footer Styling */
-    .site-footer {
-      background: #212529;
-      color: #ddd;
-      margin-top: 60px;
-      padding-top: 40px;
-      padding-bottom: 20px;
-    }
-
-    .site-footer h6 {
-      color: #fff;
-      margin-bottom: 15px;
-    }
-
-    .site-footer p,
-    .site-footer a {
-      font-size: 0.9rem;
-      color: #bbb;
-      text-decoration: none;
-    }
-
-    .site-footer a:hover {
-      color: #fff;
-    }
-
-    .footer-bottom {
-      border-top: 1px solid #444;
+    .btn-simple {
       margin-top: 20px;
-      padding-top: 10px;
-      text-align: center;
-      font-size: 0.85rem;
-      color: #aaa;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 500;
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+      text-decoration: none;
+      display: inline-block;
+      color: #333;
     }
 
+    .btn-simple:hover {
+      background-color: #e2e6ea;
+    }
+
+    footer {
+      margin-top: auto;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- Navigation -->
-<nav class="navbar navbar-expand-lg">
+<nav class="navbar navbar-expand-lg bg-white border-bottom">
   <div class="container">
-    <a class="navbar-brand" href="/">CO-PO System</a>
 
-    <div class="collapse navbar-collapse">
+    <a class="navbar-brand fw-bold" href="#">
+      CO-PO System
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+
       <ul class="navbar-nav ms-auto">
 
         <li class="nav-item"><a class="nav-link" href="{{ url_for('co_bp.add_co') }}">Add CO</a></li>
+
         <li class="nav-item"><a class="nav-link" href="{{ url_for('marks.add_marks') }}">Add Marks</a></li>
+
         <li class="nav-item"><a class="nav-link" href="{{ url_for('marks.upload_marks') }}">Upload Marks</a></li>
+
         <li class="nav-item"><a class="nav-link" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a></li>
+
         <li class="nav-item"><a class="nav-link" href="{{ url_for('po.select_course_for_po') }}">Course PO Analysis</a></li>
+
         <li class="nav-item"><a class="nav-link" href="{{ url_for('co_bp.attainment') }}">CO Attainment</a></li>
-        <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a></li>
+
+        <li class="nav-item"><a class="nav-link text-danger" href="{{ url_for('auth.logout') }}">Logout</a></li>
 
       </ul>
+
     </div>
 
   </div>
 </nav>
 
 <div class="container hero-section">
+
   <h1>Welcome to the CO-PO Attainment System</h1>
+
   <p>
     Analyze, map, and visualize the relationship between Course Outcomes (COs)
-    and Program Outcomes (POs) effectively.
+    and Program Outcomes (POs) using Outcome-Based Education (OBE) framework.
   </p>
-  <a href="{{ url_for('co_bp.attainment') }}" class="btn btn-primary">Get Started</a>
+
+  <a href="{{ url_for('co_bp.attainment') }}" class="btn-simple">
+    Get Started
+  </a>
+
 </div>
 
-<footer class="site-footer">
+<footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
 
-  <div class="container">
+    <h6 class="mb-2">CO-PO Attainment System</h6>
 
-    <div class="row text-start">
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
 
+    <hr class="bg-secondary">
 
-      <div class="col-md-4 mb-3">
-        <h6>About System</h6>
-        <p>
-          CO-PO Attainment System helps academic institutions analyze student
-          performance based on Outcome-Based Education (OBE) framework.
-        </p>
-      </div>
-
-
-      <div class="col-md-4 mb-3">
-        <h6>Contact</h6>
-        <p>Email: support@college.edu</p>
-        <p>Phone: +91-XXXXXXXXXX</p>
-        <p>Location: India</p>
-      </div>
-
-
-      <div class="col-md-4 mb-3">
-        <h6>Developers</h6>
-        <p>• Final Year Project Team</p>
-        <p>• Department of Computer Science</p>
-        <p>• Academic Year 2025-26</p>
-      </div>
-
-    </div>
-
-    <div class="footer-bottom">
+    <p class="small mb-0">
       © 2026 CO-PO Attainment System | All Rights Reserved
-    </div>
+    </p>
 
   </div>
-
 </footer>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 

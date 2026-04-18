@@ -3,21 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <title>PO Attainment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     body {
-      background-color: #f8f9fa;
+      background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    .container-box {
+    .main-header {
       background: #fff;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px #ccc;
-      margin-top: 40px;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card-ui {
+      background: #fff;
+      border-radius: 14px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      margin-top: 20px;
     }
 
     .chart-container {
@@ -38,112 +56,134 @@
       color: #888;
       font-size: 18px;
     }
+
+    .main-footer {
+      margin-top: auto;
+      background: #212529;
+      color: #ddd;
+      padding: 25px 0;
+    }
+
+    .main-footer h6 {
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .main-footer p {
+      font-size: 0.85rem;
+      margin: 0;
+      color: #bbb;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid #444;
+      margin-top: 15px;
+      padding-top: 10px;
+      font-size: 0.8rem;
+      color: #999;
+      text-align: center;
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="container-box">
 
-      <h3 class="text-center mb-4">
-        PO Attainment Levels (Based on CO Mapping)
-      </h3>
+<div class="main-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="header-title">OBE System</div>
+    <div class="small text-muted">PO Attainment</div>
+  </div>
+</div>
 
-      {% if po_stats %}
+<div class="container mb-4">
+
+  <div class="card-ui">
+
+    <h4 class="text-center mb-4">
+      PO Attainment Levels (Based on CO Mapping)
+    </h4>
+
+    {% if po_stats %}
       <div class="chart-container">
         <canvas id="poChart"></canvas>
       </div>
-      {% else %}
+    {% else %}
       <div class="no-data">
         No data available for selected filters
       </div>
-      {% endif %}
+    {% endif %}
 
-      <div class="mt-4 text-end">
-        <a href="{{ url_for('auth.index') }}" class="btn btn-secondary">
-          ← Back to Dashboard
-        </a>
-      </div>
-
+    <div class="mt-4 text-end">
+      <a href="{{ url_for('auth.index') }}" class="btn btn-light border">
+        ← Back to Dashboard
+      </a>
     </div>
+
   </div>
 
-  <script>
-    {% if po_stats %}
+</div>
 
-    const ctx = document.getElementById('poChart').getContext('2d');
+<footer class="main-footer">
+  <div class="container text-center">
 
-    const labels = [
-      {% for ps in po_stats %}
-        'PO{{ ps.po.id }}',
-      {% endfor %}
-    ];
+    <h6>CO-PO Attainment System</h6>
 
-    const data = [
-      {% for ps in po_stats %}
-        {{ ps.avg_level }},
-      {% endfor %}
-    ];
+    <p>
+      Outcome-Based Education (OBE) platform for CO-PO analysis and academic insights.
+    </p>
 
-    new Chart(ctx, {
-      type: 'radar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: 'PO Attainment Level',
-          data: data,
-          fill: true,
-          backgroundColor: 'rgba(54,162,235,0.3)',
-          borderColor: 'rgba(54,162,235,1)',
-          pointBackgroundColor: 'rgba(54,162,235,1)',
-          pointRadius: 5,
-          pointHoverRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
+    <div class="footer-bottom">
+      © 2026 CO-PO Attainment System | All Rights Reserved
+    </div>
 
-        interaction: {
-          mode: 'nearest',
-          intersect: true
-        },
+  </div>
+</footer>
 
-        scales: {
-          r: {
-            min: 0,
-            max: 3,
-            ticks: {
-              stepSize: 1,
-              backdropColor: 'transparent'
-            },
-            grid: {
-              color: '#ddd'
-            }
-          }
-        },
+<script>
+{% if po_stats %}
 
-        plugins: {
-          legend: {
-            position: 'top'
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return 'Level: ' + context.raw;
-              }
-            }
-          }
-        },
+const ctx = document.getElementById('poChart').getContext('2d');
 
-        animation: {
-          duration: 1000,
-          easing: 'easeInOutQuart'
-        }
+const labels = [
+  {% for ps in po_stats %}
+    'PO{{ ps.po.id }}',
+  {% endfor %}
+];
+
+const data = [
+  {% for ps in po_stats %}
+    {{ ps.avg_level }},
+  {% endfor %}
+];
+
+new Chart(ctx, {
+  type: 'radar',
+  data: {
+    labels: labels,
+    datasets: [{
+      label: 'PO Attainment Level',
+      data: data,
+      fill: true,
+      backgroundColor: 'rgba(54,162,235,0.2)',
+      borderColor: '#0d6efd',
+      pointBackgroundColor: '#0d6efd',
+      pointRadius: 4
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      r: {
+        min: 0,
+        max: 3
       }
-    });
+    }
+  }
+});
 
-    {% endif %}
-  </script>
+{% endif %}
+</script>
+
 </body>
 </html>

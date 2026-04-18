@@ -3,15 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <title>Professor Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     body {
-      padding: 30px;
+      background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
     }
+
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card-ui {
+      background: #ffffff;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      padding: 20px;
+    }
+
     .nav-tabs .nav-link.active {
-      background-color: #0d6efd;
-      color: white;
+      background-color: #f1f3f5;
+      border-radius: 10px;
+      font-weight: 500;
     }
+
     .table-section {
       display: none;
     }
@@ -19,34 +49,65 @@
       display: block;
       animation: fadeIn 0.3s ease-in-out;
     }
+
     table td.editable:hover {
-      background-color: #eef1f5;
+      background-color: #f1f5f9;
       cursor: pointer;
     }
+
     input.inline-edit {
       width: 100%;
-      border: none;
-      background: #ffffe0;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
       padding: 4px;
+      background: #fffbea;
     }
+
     .action-buttons {
       display: flex;
-      gap: 5px;
+      gap: 6px;
       justify-content: center;
     }
+
+    .btn-simple {
+      border-radius: 8px;
+      padding: 5px 10px;
+      font-size: 13px;
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+    }
+
+    .btn-simple:hover {
+      background-color: #e2e6ea;
+    }
+
     @keyframes fadeIn {
       from { opacity: 0; }
       to { opacity: 1; }
     }
+
+    footer {
+      margin-top: auto;
+    }
   </style>
 </head>
-<body>
-  <a href="{{ url_for('auth.index') }}" class="btn btn-outline-secondary mb-3">
-    ← Back
-  </a>
 
-<div class="container">
-  <h2 class="text-center mb-4">Professor Management Dashboard</h2>
+<body>
+
+<div class="main-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="header-title">OBE Management System</div>
+    <div class="small text-muted">Professor Dashboard</div>
+  </div>
+</div>
+
+<div class="container mt-4">
+
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="{{ url_for('auth.index') }}" class="btn btn-simple">← Back</a>
+    <h4 class="mb-0 fw-bold">Professor Management Dashboard</h4>
+    <div></div>
+  </div>
 
   {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
@@ -59,57 +120,88 @@
     {% endif %}
   {% endwith %}
 
-  <!-- Tabs -->
-  <ul class="nav nav-tabs mb-3" id="tableTabs" role="tablist">
-    {% set tables = [
-      ('cos', ['id', 'description', 'course_id'], cos_list),
-      ('marks', ['id', 'student_id', 'co_id', 'obtained', 'total'], marks_list),
-      ('co_po_map', ['id', 'co_id', 'po_id', 'level'], copomap_list)
-    ] %}
-    {% for tab in tables %}
-    <li class="nav-item" role="presentation">
-      <button class="nav-link {% if loop.first %}active{% endif %}" data-table="{{ tab[0] }}">
-        {{ tab[0].replace('_', ' ').title() }}
-      </button>
-    </li>
-    {% endfor %}
-  </ul>
+  <div class="card-ui">
 
-  {% for tab_name, columns, data in tables %}
-  <div id="{{ tab_name }}" class="table-section {% if loop.first %}active{% endif %}">
-    <h4>{{ tab_name.replace('_', ' ').title() }}</h4>
-    <div class="table-responsive">
-      <table class="table table-bordered table-hover align-middle">
-        <thead class="table-dark">
-          <tr>
-            {% for col in columns %}
-              <th>{{ col }}</th>
+    <ul class="nav nav-tabs mb-3" id="tableTabs">
+      {% set tables = [
+        ('cos', ['id', 'description', 'course_id'], cos_list),
+        ('marks', ['id', 'student_id', 'co_id', 'obtained', 'total'], marks_list),
+        ('co_po_map', ['id', 'co_id', 'po_id', 'level'], copomap_list)
+      ] %}
+
+      {% for tab in tables %}
+      <li class="nav-item">
+        <button class="nav-link {% if loop.first %}active{% endif %}" data-table="{{ tab[0] }}">
+          {{ tab[0].replace('_', ' ').title() }}
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% for tab_name, columns, data in tables %}
+    <div id="{{ tab_name }}" class="table-section {% if loop.first %}active{% endif %}">
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+
+          <thead class="table-light">
+            <tr>
+              {% for col in columns %}
+                <th>{{ col }}</th>
+              {% endfor %}
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {% for row in data %}
+            <tr data-id="{{ row['id'] }}">
+
+              {% for col in columns %}
+              <td class="editable" data-field="{{ col }}">{{ row[col] }}</td>
+              {% endfor %}
+
+              <td class="action-buttons">
+                <form method="POST"
+                      action="{{ url_for('admin.delete_row', table=tab_name, id=row['id']) }}?active={{ tab_name }}"
+                      onsubmit="return confirm('Delete this entry?');">
+                  <button class="btn btn-simple">Delete</button>
+                </form>
+
+                <button class="btn btn-simple btn-edit" disabled>Save</button>
+              </td>
+
+            </tr>
             {% endfor %}
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in data %}
-          <tr data-id="{{ row['id'] }}">
-            {% for col in columns %}
-            <td class="editable" data-field="{{ col }}">{{ row[col] }}</td>
-            {% endfor %}
-            <td class="action-buttons">
-              <form method="POST" action="{{ url_for('admin.delete_row', table=tab_name, id=row['id']) }}?active={{ tab_name }}" onsubmit="return confirm('Delete this entry?');">
-                <button class="btn btn-danger btn-sm">Delete</button>
-              </form>
-              <button class="btn btn-success btn-sm btn-edit" disabled>Save</button>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+          </tbody>
+
+        </table>
+      </div>
+
     </div>
+    {% endfor %}
+
   </div>
-  {% endfor %}
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
+
+    <h6 class="mb-2">OBE Management System</h6>
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) Management System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 OBE System | All Rights Reserved
+    </p>
+
+  </div>
+</footer>
+
 <script>
   const tabButtons = document.querySelectorAll('[data-table]');
   const sections = document.querySelectorAll('.table-section');
@@ -118,13 +210,8 @@
     tabButtons.forEach(btn => btn.classList.remove('active'));
     sections.forEach(sec => sec.classList.remove('active'));
 
-    const btn = document.querySelector(`[data-table="${name}"]`);
-    const sec = document.getElementById(name);
-
-    if (btn && sec) {
-      btn.classList.add('active');
-      sec.classList.add('active');
-    }
+    document.querySelector(`[data-table="${name}"]`)?.classList.add('active');
+    document.getElementById(name)?.classList.add('active');
   }
 
   tabButtons.forEach(btn => {
@@ -135,19 +222,18 @@
   });
 
   const params = new URLSearchParams(window.location.search);
-  const activeTab = params.get('active');
-  if (activeTab) {
-    activateSection(activeTab);
-  }
+  if (params.get('active')) activateSection(params.get('active'));
 
   document.querySelectorAll('td.editable').forEach(td => {
     td.addEventListener('dblclick', () => {
       if (td.querySelector('input')) return;
+
       const original = td.textContent.trim();
       const input = document.createElement('input');
-      input.type = 'text';
+
       input.value = original;
       input.className = 'inline-edit';
+
       td.textContent = '';
       td.appendChild(input);
       input.focus();
@@ -159,20 +245,17 @@
 
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') input.blur();
-        if (e.key === 'Escape') {
-          td.textContent = original;
-        }
+        if (e.key === 'Escape') td.textContent = original;
       });
     });
   });
-
 
   document.querySelectorAll('.btn-edit').forEach(btn => {
     btn.addEventListener('click', () => {
       const tr = btn.closest('tr');
       const id = tr.dataset.id;
-      const section = tr.closest('.table-section');
-      const table = section.id;
+      const table = tr.closest('.table-section').id;
+
       const data = {};
       tr.querySelectorAll('td.editable').forEach(td => {
         data[td.dataset.field] = td.textContent.trim();
@@ -183,17 +266,10 @@
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: new URLSearchParams(data)
       })
-      .then(res => res.json())
-      .then(response => {
-        if (response.success) {
-          alert('Updated successfully!');
-          btn.disabled = true;
-        } else {
-          alert('Update failed: ' + response.message);
-        }
-      })
-      .catch(err => {
-        alert('Error: ' + err.message);
+      .then(r => r.json())
+      .then(res => {
+        alert(res.success ? 'Updated successfully!' : 'Update failed');
+        btn.disabled = true;
       });
     });
   });

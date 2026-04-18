@@ -2,71 +2,174 @@
 <html>
 <head>
   <title>Professor Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <style>
+    body {
+        background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .main-header {
+        background: #ffffff;
+        border-bottom: 1px solid #dee2e6;
+        padding: 12px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .header-title {
+        font-weight: 600;
+        font-size: 18px;
+        color: #333;
+    }
+
+    .login-card {
+        background: #ffffff;
+        border-radius: 16px;
+        padding: 30px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        transition: 0.4s ease;
+        animation: fadeUp 0.8s ease;
+    }
+
+    .login-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 40px rgba(0,0,0,0.12);
+    }
+
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .form-control {
+        border-radius: 10px;
+        padding: 10px;
+    }
+
+    .btn-primary {
+        border-radius: 10px;
+        padding: 10px;
+        font-weight: 600;
+        background: linear-gradient(135deg, #4e73df, #224abe);
+        border: none;
+        transition: 0.3s;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(135deg, #2e59d9, #1c3faa);
+        transform: scale(1.02);
+    }
+
+    .form-check-input:checked {
+        background-color: #4e73df;
+        border-color: #4e73df;
+    }
+
+    .container.d-flex {
+        padding-top: 20px;
+        padding-bottom: 20px;
+    }
+
+    footer {
+        margin-top: auto;
+    }
+
+    .footer-link {
+        text-decoration: none;
+        color: #ccc;
+    }
+
+    .footer-link:hover {
+        color: #fff;
+        text-decoration: underline;
+    }
+</style>
 </head>
 
-<body class="bg-light">
-
-<div class="container mt-5" style="max-width: 400px;">
-
-  <h2 class="mb-4 text-center">Professor Login</h2>
-
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        {% if category.startswith('login_') %}
-          {% set alert_type = category.replace('login_', '') %}
-          <div class="alert alert-{{ alert_type }} alert-dismissible fade show auto-dismiss">
-            {{ message }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-          </div>
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <form method="POST">
-
-
-    <div class="mb-4">
-      <label class="form-label fw-bold">Login As</label>
-      <div class="d-flex justify-content-between">
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="role" value="HOD" required>
-          <label class="form-check-label">HOD</label>
-        </div>
-
-        <div class="form-check">
-          <input class="form-check-input" type="radio" name="role" value="Faculty" required>
-          <label class="form-check-label">Faculty</label>
-        </div>
-      </div>
+<body>
+<div class="main-header">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="header-title">OBE Management System</div>
+      <div class="small text-muted">Add Course Outcome</div>
     </div>
-
-
-    <div class="mb-3">
-      <label class="form-label">Username</label>
-      <input type="text" class="form-control" name="username" required>
-    </div>
-
-
-    <div class="mb-3">
-      <label class="form-label">Password</label>
-      <input type="password" class="form-control" name="password" required>
-    </div>
-
-    <button type="submit" class="btn btn-primary w-100">Login</button>
-  </form>
-
-  <div class="mt-3 text-center">
-    <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a> |
-    <a href="{{ url_for('auth.signup_professor') }}">New User</a>
   </div>
-
 </div>
 
 
-<footer class="bg-dark text-light mt-5 pt-4 pb-3">
+<div class="container d-flex justify-content-center align-items-center flex-grow-1">
+  <div class="login-card w-100" style="max-width: 420px;">
+
+    <h3 class="mb-4 text-center fw-bold">Professor Login</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category.startswith('login_') %}
+            {% set alert_type = category.replace('login_', '') %}
+            <div class="alert alert-{{ alert_type }} alert-dismissible fade show auto-dismiss">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" onsubmit="return validateForm()">
+
+      <div class="mb-4">
+        <label class="form-label fw-semibold">Login As</label>
+        <div class="d-flex justify-content-between">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="role" value="HOD" required>
+            <label class="form-check-label">HOD</label>
+          </div>
+
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="role" value="Faculty" required>
+            <label class="form-check-label">Faculty</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" class="form-control" name="username" id="username" required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-control" name="password" id="password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
+    </form>
+
+    <div class="mt-3 text-center">
+      <a href="{{ url_for('auth.forgot_password') }}">Forgot Password?</a> |
+      <a href="{{ url_for('auth.signup_professor') }}">New User</a>
+    </div>
+
+  </div>
+</div>
+
+<footer class="bg-dark text-light pt-4 pb-3">
   <div class="container text-center">
 
     <h6 class="mb-2">About This System</h6>
@@ -79,21 +182,21 @@
 
       <div class="col-md-4 mb-2">
         <h6>Contact</h6>
-        <p class="small mb-1">Email: support@bietjhs.edu</p>
+        <p class="small mb-1">Email: carentrust247@gmail.com</p>
         <p class="small">Phone: +91-8958110996</p>
       </div>
 
       <div class="col-md-4 mb-2">
         <h6>Developers</h6>
-        <p class="small mb-1">• Biet IT Cell</p>
+        <p class="small mb-1">• Biet Development Team</p>
         <p class="small">• Department of CSE / IT</p>
       </div>
 
       <div class="col-md-4 mb-2">
         <h6>Important Links</h6>
-        <p class="small mb-1">• Privacy Policy</p>
-        <p class="small mb-1">• Terms & Conditions</p>
-        <p class="small">• Help & Support</p>
+        <p class="small mb-1"><a href="privacy.html" class="footer-link">Privacy Policy</a></p>
+        <p class="small mb-1"><a href="privacy.html" class="footer-link">Terms & Conditions</a></p>
+        <p class="small"><a href="#" class="footer-link">Help & Support</a></p>
       </div>
 
     </div>
@@ -116,6 +219,28 @@
       setTimeout(() => alert.remove(), 500);
     });
   }, 5000);
+
+  function validateForm() {
+    let username = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    if (username === "" || password === "") {
+      alert("Please fill all required fields.");
+      return false;
+    }
+
+    if (username.length < 3) {
+      alert("Username must be at least 3 characters.");
+      return false;
+    }
+
+    if (password.length < 4) {
+      alert("Password must be at least 4 characters.");
+      return false;
+    }
+
+    return true;
+  }
 </script>
 
 </body>

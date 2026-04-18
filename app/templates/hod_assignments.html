@@ -2,34 +2,129 @@
 <html>
 <head>
   <title>Course Assignments</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-</head>
-<body class="bg-light">
-<div class="container mt-5">
-  <h2>All Course Assignments</h2>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <table class="table table-bordered table-striped mt-4">
-    <thead>
-      <tr>
-        <th>Course</th>
-        <th>Faculty</th>
-        <th>Session</th>
-        <th>Assigned On</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for a in assignments %}
-        <tr>
-          <td>{{ a.course.code }} - {{ a.course.name }}</td>
-          <td>{{ a.faculty.username }}</td>
-          <td>{{ a.session.name }}</td>
-          <td>{{ a.assigned_on.strftime('%Y-%m-%d') }}</td>
-        </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card-ui {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .table {
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table thead {
+      background: #f1f3f5;
+    }
+
+    .table th {
+      font-weight: 600;
+      color: #333;
+      border: none;
+    }
+
+    .table td {
+      vertical-align: middle;
+    }
+
+    footer {
+      margin-top: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="main-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="header-title">OBE Management System</div>
+    <div class="small text-muted">Course Assignments</div>
+  </div>
 </div>
 
+<div class="container d-flex justify-content-center mt-4 mb-4">
+
+  <div class="card-ui w-100">
+
+    <h3 class="text-center mb-4 fw-bold">All Course Assignments</h3>
+
+    <div class="table-responsive">
+
+      <table class="table table-bordered table-hover align-middle">
+        <thead>
+          <tr>
+            <th>Course</th>
+            <th>Faculty</th>
+            <th>Session</th>
+            <th>Assigned On</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for a in assignments %}
+            <tr>
+              <td>{{ a.course.code }} - {{ a.course.name }}</td>
+              <td>{{ a.faculty.username }}</td>
+              <td>{{ a.session.name }}</td>
+              <td>{{ a.assigned_on.strftime('%Y-%m-%d') }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</div>
+
+<footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
+
+    <h6 class="mb-2">OBE Management System</h6>
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) Management System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 OBE System | All Rights Reserved
+    </p>
+
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

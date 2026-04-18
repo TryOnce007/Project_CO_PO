@@ -9,81 +9,199 @@
 
     <style>
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             font-family: 'Segoe UI', sans-serif;
         }
-        .navbar {
-            background-color: #007bff;
+
+        .main-header {
+            background: #ffffff;
+            border-bottom: 1px solid #dee2e6;
+            padding: 12px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
-        .navbar-brand, .nav-link {
-            color: white !important;
+
+        .header-title {
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
         }
-        .container {
-            margin-top: 50px;
-            max-width: 600px;
+
+        .card-ui {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: 0.3s;
         }
-        .form-section {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+        .card-ui:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 35px rgba(0,0,0,0.12);
+        }
+
+        .form-control {
+            border-radius: 10px;
+            padding: 10px;
+        }
+
+        .btn-simple {
+            border-radius: 10px;
+            padding: 8px 16px;
+            font-weight: 500;
+            background-color: #f8f9fa;
+            border: 1px solid #ced4da;
+        }
+
+        .btn-simple:hover {
+            background-color: #e2e6ea;
+        }
+
+        footer {
+            margin-top: auto;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .footer-link {
+            text-decoration: none;
+            color: #ccc;
+        }
+
+        .footer-link:hover {
+            color: #fff;
         }
     </style>
 </head>
 
 <body>
 
-<div class="container">
+<div class="main-header">
+    <div class="container d-flex justify-content-between align-items-center">
+        <div class="header-title">OBE Management System</div>
+        <div class="small text-muted">Add Course</div>
+    </div>
+</div>
 
-    <div class="form-section">
+<div class="container d-flex justify-content-center align-items-center flex-grow-1">
+    <div class="card-ui w-100" style="max-width: 600px;">
 
-        <h3 class="mb-4">Add New Course</h3>
+        <h3 class="mb-4 fw-bold text-center">Add New Course</h3>
 
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-
               {% if category.startswith('course_') %}
                 {% set alert_type = category.replace('course_', '') %}
 
-                <div class="alert alert-{{ alert_type }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{{ alert_type }} alert-dismissible fade show auto-dismiss">
                     {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
 
               {% endif %}
-
             {% endfor %}
           {% endif %}
         {% endwith %}
 
-        <form method="POST">
+        <form method="POST" onsubmit="return validateCourseForm()">
 
             <div class="mb-3">
-                <label for="course_name" class="form-label">Course Name</label>
-                <input type="text" name="course_name" class="form-control"
+                <label class="form-label">Course Name</label>
+                <input type="text" id="course_name" name="course_name" class="form-control"
                        placeholder="e.g., Data Structures" required>
             </div>
 
-            <div class="mb-3">
-                <label for="course_code" class="form-label">Course Code</label>
-                <input type="text" name="course_code" class="form-control"
+            <div class="mb-4">
+                <label class="form-label">Course Code</label>
+                <input type="text" id="course_code" name="course_code" class="form-control"
                        placeholder="e.g., CS201" required>
             </div>
 
-            <button type="submit" class="btn btn-success">Add Course</button>
-            <a href="{{ url_for('auth.index') }}" class="btn btn-primary">Back</a>
+            <div class="d-flex justify-content-between">
+                <button type="submit" class="btn btn-simple">Add Course</button>
+                <a href="{{ url_for('auth.index') }}" class="btn btn-simple">Back</a>
+            </div>
 
         </form>
-    </div>
 
+    </div>
 </div>
 
-<footer class="text-center mt-5 mb-3 text-muted">
-    <small>&copy; 2025 CO-PO Attainment System</small>
+<footer class="bg-dark text-light pt-4 pb-3">
+    <div class="container text-center">
+
+        <h6 class="mb-2">About This System</h6>
+        <p class="small mb-3">
+            Outcome-Based Education (OBE) Management System for tracking student performance,
+            course outcomes, and academic analytics.
+        </p>
+
+        <div class="row text-start">
+
+            <div class="col-md-4 mb-2">
+                <h6>Contact</h6>
+                <p class="small mb-1">Email: support@bietjhs.edu</p>
+                <p class="small">Phone: +91-8958110996</p>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <h6>Developers</h6>
+                <p class="small mb-1">• Biet IT Cell</p>
+                <p class="small">• Department of CSE / IT</p>
+            </div>
+
+            <div class="col-md-4 mb-2">
+                <h6>Important Links</h6>
+                <p class="small mb-1"><a href="#" class="footer-link">Privacy Policy</a></p>
+                <p class="small mb-1"><a href="#" class="footer-link">Terms & Conditions</a></p>
+                <p class="small"><a href="#" class="footer-link">Help & Support</a></p>
+            </div>
+
+        </div>
+
+        <hr class="bg-secondary">
+
+        <p class="small mb-0">
+            © 2026 OBE System | All Rights Reserved
+        </p>
+
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    setTimeout(() => {
+        document.querySelectorAll('.auto-dismiss').forEach(alert => {
+            alert.classList.remove('show');
+            alert.classList.add('fade-out');
+            setTimeout(() => alert.remove(), 500);
+        });
+    }, 4000);
+
+    function validateCourseForm() {
+        let name = document.getElementById("course_name").value.trim();
+        let code = document.getElementById("course_code").value.trim();
+
+        if (name.length < 3) {
+            alert("Course name must be at least 3 characters.");
+            return false;
+        }
+
+        if (code.length < 2) {
+            alert("Course code must be at least 2 characters.");
+            return false;
+        }
+
+        return true;
+    }
+</script>
 
 </body>
 </html>

@@ -2,43 +2,138 @@
 <html>
 <head>
   <title>Add Academic Session</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .card-ui {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .form-control {
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .btn-simple {
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-weight: 500;
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+    }
+
+    .btn-simple:hover {
+      background-color: #e2e6ea;
+    }
+
+    footer {
+      margin-top: auto;
+    }
+  </style>
 </head>
-<body class="bg-light">
-<div class="container mt-5" style="max-width:500px;">
-  <h2>Add Academic Session</h2>
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    {% endif %}
-  {% endwith %}
+<body>
 
-  <form method="POST" class="mt-4">
-    <div class="mb-3">
-      <label for="name" class="form-label">Session Name</label>
-      <input type="text" class="form-control" name="name" id="name" placeholder="e.g., 2025-2026" required>
-    </div>
-
-    <div class="mb-3">
-      <label for="start_date" class="form-label">Start Date</label>
-      <input type="date" class="form-control" name="start_date" id="start_date">
-    </div>
-
-    <div class="mb-3">
-      <label for="end_date" class="form-label">End Date</label>
-      <input type="date" class="form-control" name="end_date" id="end_date">
-    </div>
-
-    <button type="submit" class="btn btn-success w-100">Add Session</button>
-  </form>
+<div class="main-header">
+  <div class="container d-flex justify-content-between align-items-center">
+    <div class="header-title">OBE Management System</div>
+    <div class="small text-muted">Academic Session</div>
+  </div>
 </div>
 
+<div class="container d-flex justify-content-center align-items-center flex-grow-1 mt-4 mb-4">
+
+  <div class="card-ui w-100" style="max-width: 500px;">
+
+    <h3 class="text-center mb-4 fw-bold">Add Academic Session</h3>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show mt-2" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+
+      <div class="mb-3">
+        <label class="form-label">Session Name</label>
+        <input type="text"
+               class="form-control"
+               name="name"
+               placeholder="e.g., 2025-2026"
+               required>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" name="start_date">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" name="end_date">
+      </div>
+
+      <div class="d-grid mt-4">
+        <button type="submit" class="btn btn-simple">Add Session</button>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
+<footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
+
+    <h6 class="mb-2">OBE Management System</h6>
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) Management System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 OBE System | All Rights Reserved
+    </p>
+
+  </div>
+</footer>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>

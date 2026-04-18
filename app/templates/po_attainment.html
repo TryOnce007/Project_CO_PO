@@ -10,6 +10,9 @@
   <style>
     body {
       background-color: #f8f9fa;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
     .container-box {
@@ -38,10 +41,30 @@
       color: #888;
       font-size: 18px;
     }
+
+    .site-footer {
+      margin-top: auto;
+      background: #212529;
+      color: #ccc;
+      padding: 25px 0;
+      text-align: center;
+    }
+
+    .site-footer h6 {
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .site-footer p {
+      margin: 0;
+      font-size: 0.9rem;
+      color: #bbb;
+    }
   </style>
 </head>
 
 <body>
+
   <div class="container">
     <div class="container-box">
 
@@ -67,6 +90,24 @@
 
     </div>
   </div>
+
+  <footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
+
+    <h6 class="mb-2">CO-PO Attainment System</h6>
+
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) platform for CO-PO analysis and academic insights.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 CO-PO Attainment System | All Rights Reserved
+    </p>
+
+  </div>
+</footer>
 
   <script>
     {% if po_stats %}
@@ -103,47 +144,18 @@
       options: {
         responsive: true,
         maintainAspectRatio: false,
-
-        interaction: {
-          mode: 'nearest',
-          intersect: true
-        },
-
         scales: {
           r: {
             min: 0,
             max: 3,
-            ticks: {
-              stepSize: 1,
-              backdropColor: 'transparent'
-            },
-            grid: {
-              color: '#ddd'
-            }
+            ticks: { stepSize: 1 }
           }
-        },
-
-        plugins: {
-          legend: {
-            position: 'top'
-          },
-          tooltip: {
-            callbacks: {
-              label: function(context) {
-                return 'Level: ' + context.raw;
-              }
-            }
-          }
-        },
-
-        animation: {
-          duration: 1000,
-          easing: 'easeInOutQuart'
         }
       }
     });
 
     {% endif %}
   </script>
+
 </body>
 </html>

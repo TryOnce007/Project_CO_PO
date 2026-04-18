@@ -81,22 +81,24 @@ class COService:
         else:
 
             assigned_course_ids = db.session.query(
-                CourseAssignment.course_id
-            ).filter(
-                CourseAssignment.faculty_id == user_id
-            ).subquery()
+            CourseAssignment.course_id
+        ).filter(
+            CourseAssignment.faculty_id == user_id
+        ).subquery()
 
-            courses = Course.query.filter(
-                Course.id.in_(assigned_course_ids)
-            ).all()
+        courses = Course.query.filter(
+            Course.id.in_(assigned_course_ids)
+        ).all()
 
-            cos_query = CO.query.filter(
-                CO.course_id.in_(assigned_course_ids)
-            )
+        cos_query = CO.query.filter(
+            CO.course_id.in_(assigned_course_ids)
+        )
 
-            if course_id:
-                cos_query = cos_query.filter(CO.course_id == course_id)
-
+        # ✅ IMPORTANT FIX: block everything if no course selected
+        if not course_id:
+            cos = []   # or cos_query.limit(0).all()
+        else:
+            cos_query = cos_query.filter(CO.course_id == course_id)
             cos = cos_query.all()
 
         attainment_data = []
