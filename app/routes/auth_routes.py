@@ -1,3 +1,4 @@
+from app.extension import limiter
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from app.services.auth_service import (
     get_index_data,
@@ -88,6 +89,8 @@ def forgot_password():
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
+@limiter.limit("5 per minute")
+
 def login():
 
     if 'user_id' in session:
@@ -147,5 +150,10 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
-
+@auth_bp.errorhandler(429)
+def ratelimit_handler(e):
+    return render_template(
+        "429.html",
+        retry_after=e.description if hasattr(e, "description") else None
+    ), 429
 

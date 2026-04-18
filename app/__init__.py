@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
+from app.extension import limiter
 
 db = SQLAlchemy()
 
@@ -15,6 +16,8 @@ def create_app():
 
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DB_URL')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+    limiter.init_app(app)
 
     db.init_app(app)
     
@@ -44,3 +47,6 @@ def create_app():
     app.register_blueprint(student_bp)
 
     return app
+
+
+

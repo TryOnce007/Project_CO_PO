@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Too Many Requests</title>
+
+```
+<style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        max-width: 420px;
+        width: 90%;
+    }
+
+    h1 {
+        font-size: 60px;
+        margin: 0;
+        color: #dc3545;
+    }
+
+    h2 {
+        margin: 10px 0;
+        font-weight: 600;
+        color: #333;
+    }
+
+    p {
+        color: #555;
+        margin: 10px 0;
+        line-height: 1.5;
+    }
+
+    .timer {
+        font-weight: bold;
+        color: #dc3545;
+    }
+
+    .btn {
+        margin-top: 20px;
+        display: inline-block;
+        padding: 12px 24px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 6px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .footer {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #888;
+    }
+</style>
+```
+
+</head>
+
+<body>
+    <div class="card">
+        <h1>429</h1>
+        <h2>Too Many Requests</h2>
+
+```
+    <p>You’ve attempted to log in too many times in a short period.</p>
+
+    {% if retry_after %}
+        <p>Please wait <span class="timer">{{ retry_after }}</span> seconds before trying again.</p>
+    {% else %}
+        <p>Please wait a moment and try again.</p>
+    {% endif %}
+
+
+    <div class="footer">
+        If this keeps happening, contact support.
+    </div>
+</div>
+```
+
+</body>
+</html>

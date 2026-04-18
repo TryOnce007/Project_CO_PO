@@ -94,9 +94,8 @@ class COService:
             CO.course_id.in_(assigned_course_ids)
         )
 
-        # ✅ IMPORTANT FIX: block everything if no course selected
         if not course_id:
-            cos = []   # or cos_query.limit(0).all()
+            cos = []   
         else:
             cos_query = cos_query.filter(CO.course_id == course_id)
             cos = cos_query.all()
