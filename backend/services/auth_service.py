@@ -14,7 +14,7 @@ def get_home_redirect(session):
         if session.get('role') == 'HOD':
             return redirect(url_for('hod_bp.hod_dashboard'))
         else:
-            return redirect(url_for('professor'))
+            return redirect(url_for('auth.professor'))
 
     return redirect(url_for('auth.login'))
 

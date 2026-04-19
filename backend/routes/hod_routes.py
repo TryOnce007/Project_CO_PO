@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, session
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session, jsonify
 from backend.services.hod_service import HODService
 
 hod_bp = Blueprint("hod_bp", __name__)
@@ -43,20 +43,22 @@ def add_po():
 
 
 
-@hod_bp.route('/hod/assign_course', methods=['GET', 'POST'])
-def assign_course():
-
-    if request.method == 'POST':
-        result = HODService.assign_course(
-            request.form
-        )
-
-        flash(result["message"], result["category"])
-        return redirect(url_for('hod_bp.assign_course'))
+@hod_bp.route('/hod/assign_course', methods=['GET'])
+def assign_course_page():
 
     data = HODService.get_assignments(session.get('user_id'))
 
     return render_template('hod_assign_course.html', **data)
+
+
+
+
+@hod_bp.route('/hod/assign_course', methods=['POST'])
+def assign_course():
+
+    result = HODService.assign_course(request.form)
+
+    return jsonify(result)
 
 
 

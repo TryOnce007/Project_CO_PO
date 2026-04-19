@@ -24,7 +24,16 @@ def get_dashboard_context(user_id, role, args):
     branches = []
 
 
-    if role == "HOD":
+    if role =="Admin":
+        
+        branches = list({c.code for c in Branch.query.all()})
+        branch_obj = Branch.query.filter_by(code=selected_branch_code).first()
+        if branch_obj:
+            pos = PO.query.filter_by(branch=branch_obj.code).all()
+            courses = Course.query.filter_by(branch=branch_obj.code).all()
+
+
+    elif role == "HOD":
 
         hod = Professor.query.get(user_id)
 
@@ -58,7 +67,7 @@ def get_dashboard_context(user_id, role, args):
     return {
         "role": role,
         "branch": branch_obj,
-        "branches": branches if role == "Faculty" else [],
+        "branches": branches if role in ["Faculty", "Admin"] else [],
         "sessions": sessions,
         "batches": batches,
         "courses": courses,

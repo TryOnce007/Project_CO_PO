@@ -70,37 +70,66 @@ class HODService:
         course_id = form.get("course_id")
         faculty_id = form.get("faculty_id")
         session_id = form.get("session_id")
+        confirm_update = form.get("confirm_update")
 
         if not all([batch_id, course_id, faculty_id, session_id]):
-            return {"message": "All fields required!", "category": "danger"}
-
+            return {
+                "message": "All fields required!",
+                "category": "danger"
+            }
+        
         existing = CourseAssignment.query.filter_by(
             batch_id=batch_id,
             course_id=course_id,
-            faculty_id=faculty_id,
             session_id=session_id
         ).first()
 
-        if existing:
-            return {"message": "Assignment already exists!", "category": "warning"}
 
-        db.session.add(CourseAssignment(
+        if existing:
+            if str(existing.faculty_id) == str(faculty_id):
+                return {
+                    "message": "Already assigned to this faculty.",
+                    "category": "info"
+                }
+
+            if confirm_update != "1":
+                return {
+                    "message": "Assignment exists. Do you want to change faculty?",
+                    "category": "warning",
+                    "requires_confirmation": True
+                }
+
+            existing.faculty_id = faculty_id
+            db.session.commit()
+
+            return {
+                "message": "Faculty updated successfully!",
+                "category": "success"
+            }
+
+
+        new_assignment = CourseAssignment(
             batch_id=batch_id,
             course_id=course_id,
             faculty_id=faculty_id,
             session_id=session_id
-        ))
+        )
 
+        db.session.add(new_assignment)
         db.session.commit()
 
-        return {"message": "Course assigned successfully!", "category": "success"}
-
-
+        return {
+            "message": "Course assigned successfully!",
+            "category": "success"
+        }
+    
 
     @staticmethod
     def get_assignments(hod_id):
 
         hod = Professor.query.get(hod_id)
+        
+        courses = Course.query.filter_by(branch=hod.branch).all()
 
         if not hod:
             return {}
@@ -121,7 +150,8 @@ class HODService:
             "assignments": assignments,
             "faculty": faculty,
             "sessions": AcademicSession.query.all(),
-            "batches": Batch.query.all()
+            "batches": Batch.query.all(),
+            "courses": courses
         }
 
 

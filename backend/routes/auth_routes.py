@@ -33,7 +33,7 @@ def index():
         professors = get_index_data()
         return render_template('index.html', professors=professors)
 
-    elif role == 'HOD':
+    elif role == 'HOD' or 'admin':
         return redirect(url_for('hod_bp.hod_dashboard'))
 
     return redirect(url_for('auth.login'))
@@ -89,12 +89,12 @@ def forgot_password():
 
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
-@limiter.limit("5 per minute")
+# @limiter.limit("5 per minute")
 
 def login():
 
     if 'user_id' in session:
-        if session.get('role') == 'HOD':
+        if session.get('role') == 'HOD' or 'admin':
             return redirect(url_for('hod_bp.hod_dashboard'))
         return redirect(url_for('auth.professor'))
 

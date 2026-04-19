@@ -88,21 +88,40 @@
 
     <div class="row g-3">
 
+      {% if session.get('role') == 'Admin' %}
+      <div class="col-md-4">
+        <a class="dash-btn" href="{{ url_for('auth.signup_professor') }}">
+          Add HOD
+        </a>
+      </div>
+      {% endif %}
+
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('hod_bp.add_teacher') }}">Add New Teacher</a>
       </div>
+      {% endif %}
 
+
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('student_bp.add_student') }}">Add Student</a>
       </div>
+      {% endif %}
 
+
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('hod_bp.add_po') }}">Add Program Outcome</a>
       </div>
+      {% endif %}
 
+
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('co_po_bp.map_co_po') }}">Map CO-PO</a>
       </div>
+      {% endif %}
 
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('dashboard.dashboard') }}">Dashboard</a>
@@ -112,21 +131,29 @@
         <a class="dash-btn" href="{{ url_for('po.select_course_for_po') }}">CO Analysis</a>
       </div>
 
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('course_bp.add_course') }}">Add Course</a>
       </div>
+      {% endif %}
 
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('hod_bp.add_session') }}">Add Academic Session</a>
       </div>
+      {% endif %}
 
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('hod_bp.assign_course') }}">Assign Teacher</a>
       </div>
+      {% endif %}
 
+      {% if session.get('role') == 'HOD' %}
       <div class="col-md-4">
         <a class="dash-btn" href="{{ url_for('hod_bp.view_assignments') }}">View Assignments</a>
       </div>
+      {% endif %}
 
     </div>
 

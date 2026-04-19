@@ -61,6 +61,7 @@
 
 <body>
 
+<!-- ✅ HEADER -->
 <div class="main-header">
     <div class="container d-flex justify-content-between align-items-center">
         <div class="header-title">OBE Management System</div>
@@ -72,18 +73,18 @@
 
     <h3 class="text-center mb-4 fw-bold">CO & PO Attainment Dashboard</h3>
 
+    <!-- FILTERS -->
     <div class="filter-box">
-
         <form method="GET" action="{{ url_for('dashboard.dashboard') }}">
             <div class="row g-3">
 
-                {% if role == "Faculty" %}
+                {% if role in ["Faculty", "Admin"] %}
                 <div class="col-md-3">
                     <label class="form-label">Branch</label>
-                    <select name="branch_code" class="form-select" onchange="this.form.submit()">
+                    <select name="branch_code" class="form-select" onchange="onBranchChange(this)">
+                        <option value="">-- Select Branch --</option>
                         {% for b in branches %}
-                        <option value="{{ b }}"
-                            {% if selected_branch_code == b %}selected{% endif %}>
+                        <option value="{{ b }}" {% if selected_branch_code == b %}selected{% endif %}>
                             {{ b }}
                         </option>
                         {% endfor %}
@@ -93,11 +94,10 @@
 
                 <div class="col-md-3">
                     <label class="form-label">Session</label>
-                    <select name="session_id" class="form-select" onchange="this.form.submit()">
+                    <select name="session_id" class="form-select" onchange="onSessionChange(this)">
                         <option value="">-- Select Session --</option>
                         {% for s in sessions %}
-                        <option value="{{ s.id }}"
-                            {% if selected_session_id == s.id %}selected{% endif %}>
+                        <option value="{{ s.id }}" {% if selected_session_id == s.id %}selected{% endif %}>
                             {{ s.name }}
                         </option>
                         {% endfor %}
@@ -109,8 +109,7 @@
                     <select name="course_id" class="form-select" onchange="this.form.submit()">
                         <option value="">-- Select Course --</option>
                         {% for c in courses %}
-                        <option value="{{ c.id }}"
-                            {% if selected_course_id == c.id %}selected{% endif %}>
+                        <option value="{{ c.id }}" {% if selected_course_id == c.id %}selected{% endif %}>
                             {{ c.code }} - {{ c.name }}
                         </option>
                         {% endfor %}
@@ -119,12 +118,11 @@
 
             </div>
         </form>
-
     </div>
 
+    <!-- CHARTS -->
     <div class="row g-4">
 
-        {% if selected_course_id %}
         <div class="col-lg-6 col-md-12">
             <div class="card-ui">
                 <div class="inner-padding">
@@ -135,7 +133,6 @@
                 </div>
             </div>
         </div>
-        {% endif %}
 
         <div class="col-lg-6 col-md-12">
             <div class="card-ui">
@@ -152,6 +149,7 @@
 
 </div>
 
+<!-- ✅ FOOTER -->
 <footer class="bg-dark text-light pt-4 pb-3">
   <div class="container text-center">
 
@@ -172,14 +170,50 @@
 
 <script>
 
+// ===== FILTER LOGIC =====
+function onBranchChange(el) {
+    window.location.href = `?branch_code=${el.value}`;
+}
+
+function onSessionChange(el) {
+    const branch = document.querySelector('[name="branch_code"]')?.value || "";
+    window.location.href = `?branch_code=${branch}&session_id=${el.value}`;
+}
+
+// ===== DATA =====
+let coLabels = [];
+let coData = [];
+let poLabels = [];
+let poData = [];
+
 {% if selected_course_id %}
+
+// Real data
+coLabels = [{% for c in co_stats %}'CO{{ c.co.id }}',{% endfor %}];
+coData = [{% for c in co_stats %}{{ c.percent }},{% endfor %}];
+
+poLabels = [{% for p in po_stats %}'PO{{ p.po.id }}',{% endfor %}];
+poData = [{% for p in po_stats %}{{ p.avg_level }},{% endfor %}];
+
+{% else %}
+
+// Placeholder data
+coLabels = ['CO1','CO2','CO3'];
+coData = [0,0,0];
+
+poLabels = ['PO1','PO2','PO3','PO4'];
+poData = [0,0,0,0];
+
+{% endif %}
+
+// ===== CHARTS =====
 new Chart(document.getElementById('coChart'), {
     type: 'bar',
     data: {
-        labels: [{% for c in co_stats %}'CO{{ c.co.id }}',{% endfor %}],
+        labels: coLabels,
         datasets: [{
             label: 'CO %',
-            data: [{% for c in co_stats %}{{ c.percent }},{% endfor %}],
+            data: coData,
             backgroundColor: '#0d6efd'
         }]
     },
@@ -188,15 +222,14 @@ new Chart(document.getElementById('coChart'), {
         maintainAspectRatio: false
     }
 });
-{% endif %}
 
 new Chart(document.getElementById('poChart'), {
     type: 'radar',
     data: {
-        labels: [{% for p in po_stats %}'PO{{ p.po.id }}',{% endfor %}],
+        labels: poLabels,
         datasets: [{
             label: 'PO Level',
-            data: [{% for p in po_stats %}{{ p.avg_level }},{% endfor %}],
+            data: poData,
             backgroundColor: 'rgba(13,110,253,0.2)',
             borderColor: '#0d6efd'
         }]

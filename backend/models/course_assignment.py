@@ -21,3 +21,8 @@ class CourseAssignment(db.Model):
     course = db.relationship('Course', backref='assignments')
     faculty = db.relationship('Professor', backref='assignments')
     batch = db.relationship('Batch', backref='assignments')
+
+
+    __table_args__ = (
+        db.UniqueConstraint('course_id', 'session_id', name='unique_course_session'),
+    )

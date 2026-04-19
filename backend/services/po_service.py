@@ -21,6 +21,10 @@ def get_course_list_for_role(user_id, role):
             return []
 
         return Course.query.filter_by(branch=hod.branch).all()
+    
+    elif role == "Admin":
+
+        return Course.query.all()
 
     return []
 

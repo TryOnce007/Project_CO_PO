@@ -17,4 +17,6 @@ def dashboard():
         args=request.args
     )
 
+
+
     return render_template('dashboard.html', **context)
