@@ -1,4 +1,4 @@
-from backend.extension import limiter
+# from backend.extension import limiter
 from flask import Blueprint, render_template, request, redirect, url_for, session, flash
 from backend.services.auth_service import (
     get_index_data,
