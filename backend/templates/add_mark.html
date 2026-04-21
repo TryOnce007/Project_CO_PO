@@ -21,6 +21,10 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
+        .logo {
+    height: 45px;
+}
+
         .header-title {
             font-weight: 600;
             font-size: 18px;
@@ -75,8 +79,16 @@
 
 <div class="main-header">
     <div class="container d-flex justify-content-between align-items-center">
-        <div class="header-title">OBE Management System</div>
-        <div class="small text-muted">Marks Entry Grid</div>
+        <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
+
+            </div>
+            <div class="text-muted small">Add Marks</div>
     </div>
 </div>
 
@@ -154,8 +166,10 @@
                         <tr>
                             <th>Roll No</th>
                             <th>Name</th>
-                            <th>Total Marks</th>
-                            <th>Obtained Marks</th>
+                            <th>Total Direct Marks</th>
+                            <th>Obtained Direct Marks</th>
+                            <th>Total Indirect Marks</th>
+                            <th>Obtained Indirect Marks</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -168,10 +182,21 @@
 </div>
 
 <footer class="bg-dark text-light pt-4 pb-3">
-    <div class="container text-center">
-        <h6 class="mb-2">OBE System</h6>
-        <p class="small mb-0">Outcome-Based Education Management System</p>
-    </div>
+  <div class="container text-center">
+
+    <h6 class="mb-2">OBE Management System</h6>
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) Management System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 OBE System | All Rights Reserved
+    </p>
+
+  </div>
 </footer>
 
 <script>
@@ -210,12 +235,22 @@ function loadGrid() {
                     <td>${row.roll_no}</td>
                     <td>${row.name}</td>
 
+                    <!-- Direct -->
                     <td>
-                        <input type="number" class="form-control total-${row.student_id}" value="${row.total || ''}">
+                        <input type="number" min="0" class="form-control total-${row.student_id}" value="${row.total || ''}">
                     </td>
 
                     <td>
-                        <input type="number" class="form-control obtained-${row.student_id}" value="${row.obtained || ''}">
+                        <input type="number" min="0" class="form-control obtained-${row.student_id}" value="${row.obtained || ''}">
+                    </td>
+
+                    <!-- Indirect -->
+                    <td>
+                        <input type="number" min="0" class="form-control indirect-total-${row.student_id}" value="${row.indirect_total || ''}">
+                    </td>
+
+                    <td>
+                        <input type="number" min="0" class="form-control indirect-obtained-${row.student_id}" value="${row.indirect_obtained || ''}">
                     </td>
 
                     <td>
@@ -235,18 +270,28 @@ function saveRow(student_id, mark_id, co_id, session) {
     const total = document.querySelector(`.total-${student_id}`).value;
     const obtained = document.querySelector(`.obtained-${student_id}`).value;
 
+    const indirect_total = document.querySelector(`.indirect-total-${student_id}`).value;
+    const indirect_obtained = document.querySelector(`.indirect-obtained-${student_id}`).value;
+
+    // Validation
     if (!total || !obtained) {
-        alert("Please enter marks");
+        alert("Please enter direct marks");
         return;
     }
 
-    if (parseFloat(total) < 0) {
+    if (parseFloat(total) < 0 || parseFloat(indirect_total || 0) < 0) {
         alert("Total marks cannot be negative");
         return;
     }
 
     if (parseFloat(obtained) > parseFloat(total)) {
-        alert("Obtained marks cannot be greater than total marks");
+        alert("Direct obtained cannot exceed total");
+        return;
+    }
+
+    if (indirect_total && indirect_obtained &&
+        parseFloat(indirect_obtained) > parseFloat(indirect_total)) {
+        alert("Indirect obtained cannot exceed total");
         return;
     }
 
@@ -259,7 +304,9 @@ function saveRow(student_id, mark_id, co_id, session) {
             co_id,
             session,
             total,
-            obtained
+            obtained,
+            indirect_total,
+            indirect_obtained
         })
     })
     .then(res => res.json())

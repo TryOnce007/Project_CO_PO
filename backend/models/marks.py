@@ -12,8 +12,13 @@ class Mark(db.Model):
     id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     student_id = db.Column(db.Integer, db.ForeignKey('students.id'), nullable=False)
     co_id = db.Column(db.Integer, db.ForeignKey('cos.id'), nullable=False)
-    obtained = db.Column(db.Float, nullable=False)
-    total = db.Column(db.Float, nullable=False)
+    
+    obtained = db.Column(db.Float, nullable=True)
+    total = db.Column(db.Float, nullable=True)
+
+    indirect_obtained = db.Column(db.Float, nullable=False)
+    indirect_total = db.Column(db.Float, nullable=False)
+
     session = db.Column(db.Integer, db.ForeignKey('academic_sessions.id'))
 
     student = db.relationship('Student', backref='marks')

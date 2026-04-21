@@ -23,6 +23,10 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
+    .logo {
+    height: 45px;
+}
+
     .header-title {
       font-weight: 600;
       font-size: 18px;
@@ -61,8 +65,16 @@
 
 <div class="main-header">
   <div class="container d-flex justify-content-between align-items-center">
-    <div class="header-title">OBE System</div>
-    <div class="small text-muted">CO → PO Mapping</div>
+    <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
+
+            </div>
+            <div class="text-muted small">CO → PO Mapping</div>
   </div>
 </div>
 
@@ -71,6 +83,17 @@
   <div class="card-ui">
 
     <h4 class="mb-4 text-center">Map Course Outcome (CO) to Program Outcome (PO)</h4>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show mb-3">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
     <form method="POST">
 

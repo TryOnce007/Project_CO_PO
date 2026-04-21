@@ -22,6 +22,10 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
+    .logo {
+    height: 45px;
+}
+
     .header-title {
       font-weight: 600;
       font-size: 18px;
@@ -82,8 +86,16 @@
 
 <div class="main-header">
   <div class="container d-flex justify-content-between align-items-center">
-    <div class="header-title">OBE Management System</div>
-    <div class="small text-muted">Add Course Outcome</div>
+    <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
+
+            </div>
+            <div class="text-muted small">Add Course Outcome</div>
   </div>
 </div>
 
@@ -108,11 +120,6 @@
 
     <form method="POST" onsubmit="return validateCOForm()">
 
-      <div class="mb-3">
-        <label for="description" class="form-label">CO Description</label>
-        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
-      </div>
-
       <div class="mb-4">
         <label for="course_id" class="form-label">Select Course</label>
         <select class="form-select" id="course_id" name="course_id" required>
@@ -121,6 +128,12 @@
             <option value="{{ course.id }}">{{ course.name }} ({{ course.code }})</option>
           {% endfor %}
         </select>
+      </div>
+
+
+      <div class="mb-3">
+        <label for="description" class="form-label">CO Description</label>
+        <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
       </div>
 
       <div class="d-flex justify-content-between">
@@ -146,7 +159,7 @@
 
       <div class="col-md-4 mb-2">
         <h6>Contact</h6>
-        <p class="small mb-1">Email: support@bietjhs.edu</p>
+        <p class="small mb-1">Email: carentrust247@gmail.com</p>
         <p class="small">Phone: +91-8958110996</p>
       </div>
 
@@ -158,9 +171,9 @@
 
       <div class="col-md-4 mb-2">
         <h6>Important Links</h6>
-        <p class="small mb-1"><a href="#" class="footer-link">Privacy Policy</a></p>
-        <p class="small mb-1"><a href="#" class="footer-link">Terms & Conditions</a></p>
-        <p class="small"><a href="#" class="footer-link">Help & Support</a></p>
+        <p class="small mb-1"><a href="{{ url_for('admin.privacy') }}" class="footer-link">Privacy Policy</a></p>
+        <p class="small mb-1"><a href="{{ url_for('admin.privacy') }}" class="footer-link">Terms & Conditions</a></p>
+        <p class="small"><a href="{{ url_for('admin.privacy') }}" class="footer-link">Help & Support</a></p>
       </div>
 
     </div>

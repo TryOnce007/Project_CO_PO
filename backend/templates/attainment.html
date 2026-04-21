@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>CO Attainment Report</title>
@@ -9,200 +10,307 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        body {
-            background: linear-gradient(135deg, #eef2f7, #dbe6f6);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            font-family: 'Segoe UI', sans-serif;
-        }
+        html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
 
-        .main-header {
-            background: #ffffff;
-            border-bottom: 1px solid #dee2e6;
-            padding: 12px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
+body {
+    background: linear-gradient(135deg, #eef2f7, #dbe6f6);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+}
 
-        .header-title {
-            font-weight: 600;
-            font-size: 18px;
-            color: #333;
-        }
+.main-header {
+    background: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 12px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
 
-        .card-ui {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
+.header-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
 
-        .chart-card {
-            height: 380px;            
-            display: flex;
-            flex-direction: column;
-        }
+.logo {
+    height: 45px;
+}
 
-        .chart-body {
-            flex: 1;
-            position: relative;
-        }
+.title-box {
+    display: flex;
+    flex-direction: column;
+}
 
-        .attainment-level-3 { background-color: #d1e7dd; font-weight: bold; }
-        .attainment-level-2 { background-color: #fff3cd; font-weight: bold; }
-        .attainment-level-1 { background-color: #f8d7da; font-weight: bold; }
-        .attainment-level-0 { background-color: #f5c2c7; font-weight: bold; }
-        .no-data { background-color: #e2e3e5; font-style: italic; }
+.header-title {
+    font-weight: 600;
+    font-size: 18px;
+    color: #333;
+}
 
-        .btn-simple {
-            border-radius: 10px;
-            padding: 8px 16px;
-            font-weight: 500;
-            background-color: #f8f9fa;
-            border: 1px solid #ced4da;
-        }
+.company-name {
+    font-size: 13px;
+    color: #6c757d;
+}
 
-        .btn-simple:hover {
-            background-color: #e2e6ea;
-        }
+.card-ui {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
 
-        footer {
-            margin-top: auto;
-        }
+.chart-card {
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-body {
+    flex: 1;
+    position: relative;
+    min-height: 350px;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.table {
+    background: #fff;
+}
+
+footer {
+    margin-top: auto;   
+    background: #212529;
+    color: white;
+    padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+    .chart-card {
+        min-height: 380px;
+    }
+
+    .chart-body {
+        min-height: 280px;
+    }
+}
     </style>
 </head>
 
 <body>
 
-<div class="main-header">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="header-title">OBE Management System</div>
-        <div class="small text-muted">CO Attainment Report</div>
-    </div>
-</div>
+    <div class="main-header">
+        <div class="container header-wrap">
 
-<div class="container mt-4">
-<div class="card-ui">
+            <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
 
-    <h3 class="text-center mb-4 fw-bold">📊 CO Attainment Report</h3>
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
 
-    <form method="GET" action="{{ url_for('co_bp.attainment') }}" class="mb-4">
-        <div class="row justify-content-center">
-            <div class="col-md-4">
-                <label class="form-label">Select Course</label>
-                <select name="course_id" class="form-select" onchange="this.form.submit()" required>
-                    <option value="">-- Select Course --</option>
-                    {% for c in courses %}
-                    <option value="{{ c.id }}"
-                        {% if selected_course_id == c.id %}selected{% endif %}>
-                        {{ c.name }}
-                    </option>
-                    {% endfor %}
-                </select>
             </div>
-        </div>
-    </form>
 
-    <div class="table-responsive">
-        <table class="table table-bordered table-hover text-center align-middle">
-            <thead class="table-light">
-                <tr>
-                    <th>CO</th>
-                    <th>Description</th>
-                    <th>Attainment Level</th>
-                    <th>Average %</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for row in data %}
-                <tr class="
-                    {% if row.level == 3 %} attainment-level-3
-                    {% elif row.level == 2 %} attainment-level-2
-                    {% elif row.level == 1 %} attainment-level-1
-                    {% elif row.level == 0 %} attainment-level-0
-                    {% else %} no-data {% endif %}
-                ">
-                    <td>CO{{ row.co.id }}</td>
-                    <td class="text-start">{{ row.co.description }}</td>
-                    <td>
-                        {% if row.level != 'No data' %}
-                            Level {{ row.level }}
-                        {% else %}
-                            No data
-                        {% endif %}
-                    </td>
-                    <td>{{ row.percentage }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <div class="text-muted small">CO Attainment Report</div>
+
+        </div>
     </div>
 
-    {% if not selected_course_id %}
-        <p class="text-center text-muted mt-3">
-            Please select a course to view analytics.
-        </p>
-    {% endif %}
+    <div class="container mt-4">
+        <div class="card-ui">
 
-    {% if data and selected_course_id %}
+            <h3 class="text-center mb-4">📊 CO Attainment Report</h3>
 
-    <hr class="my-4">
+            <div class="row mb-3">
 
-    <h5 class="text-center mb-4 fw-bold">📊 CO Analytics Dashboard</h5>
+                <div class="col-md-6">
+                    <select id="sessionSelect" class="form-select">
+                        <option value="">Select Session</option>
+                        {% for s in sessions %}
+                        <option value="{{ s.id }}">{{ s.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-    <div class="row g-4">
+                <div class="col-md-6">
+                    <select id="courseSelect" class="form-select">
+                        <option value="">Select Course</option>
+                        {% for c in courses %}
+                        <option value="{{ c.id }}">{{ c.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <div class="col-md-6">
-            <div class="card chart-card border-0 shadow-sm rounded-4">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="text-center mb-2">📊 Bar Analysis</h6>
-                    <div class="chart-body">
-                        <canvas id="attainmentChart"></canvas>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>CO</th>
+                            <th>Description</th>
+                            <th>Level</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="tableBody">
+                        <tr>
+                            <td colspan="4" class="text-muted">Select Session & Course</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+            </div>
+
+            <div class="row g-3">
+
+                <div class="col-md-6">
+                    <div class="card chart-card">
+                        <div class="card-body">
+                            <h6 class="text-center">Bar Chart</h6>
+                            <div class="chart-body">
+                                <canvas id="barChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-6">
-            <div class="card chart-card border-0 shadow-sm rounded-4">
-                <div class="card-body d-flex flex-column">
-                    <h6 class="text-center mb-2">📡 Radar Analysis</h6>
-                    <div class="chart-body">
-                        <canvas id="radarChart"></canvas>
+                <div class="col-md-6">
+                    <div class="card chart-card">
+                        <div class="card-body">
+                            <h6 class="text-center">Radar Chart</h6>
+                            <div class="chart-body">
+                                <canvas id="radarChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
 
+            </div>
+
+        </div>
     </div>
+
+    <footer class="bg-dark text-light pt-4 pb-3">
+        <div class="container text-center">
+
+            <h6 class="mb-2">OBE Management System</h6>
+            <p class="small mb-0">
+            Outcome-Based Education (OBE) Management System for tracking student performance,
+            course outcomes, and academic analytics.
+            </p>
+
+            <hr class="bg-secondary">
+
+            <p class="small mb-0">
+            © 2026 OBE System | All Rights Reserved
+            </p>
+
+        </div>
+    </footer>
 
     <script>
-        const labels = [
-            {% for row in data %}
-                'CO{{ row.co.id }}'{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        ];
+    let barChart = null;
+    let radarChart = null;
 
-        const values = [
-            {% for row in data %}
-                {{ row.percentage if row.percentage != 'N/A' else 0 }}{% if not loop.last %}, {% endif %}
-            {% endfor %}
-        ];
+    document.getElementById("sessionSelect").addEventListener("change", loadData);
+    document.getElementById("courseSelect").addEventListener("change", loadData);
 
-        new Chart(document.getElementById('attainmentChart'), {
-            type: 'bar',
+    async function loadData() {
+
+        const session_id = document.getElementById("sessionSelect").value;
+        const course_id = document.getElementById("courseSelect").value;
+
+        if (!session_id || !course_id) {
+            clearUI();
+            return;
+        }
+
+        try {
+            const res = await fetch(`/co_attainment_ajax?session_id=${session_id}&course_id=${course_id}`);
+            const data = await res.json();
+
+            console.log("API DATA:", data);
+
+            if (!Array.isArray(data) || data.length === 0) {
+                clearUI();
+                return;
+            }
+
+            updateTable(data);
+            updateCharts(data);
+
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    }
+
+    function updateTable(data) {
+
+        const tbody = document.getElementById("tableBody");
+        tbody.innerHTML = "";
+
+        data.forEach((row, i) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>CO${i + 1}</td>
+                    <td>${row.co.description}</td>
+                    <td>${row.level}</td>
+                    <td>${row.percent}</td>
+                </tr>`;
+        });
+    }
+
+    function updateCharts(data) {
+
+        console.log("CO_STATS RECEIVED:", data);
+
+        if (!Array.isArray(data) || data.length === 0) return;
+
+        // 🔥 stable sequential labels (IMPORTANT for radar)
+        const labels = data.map((_, i) => `CO${i + 1}`);
+
+        // 🔥 safe numeric conversion
+        const values = data.map(d => Number(d.percent) || 0);
+
+        // ================= DESTROY OLD CHARTS =================
+        if (barChart) {
+            barChart.destroy();
+            barChart = null;
+        }
+
+        if (radarChart) {
+            radarChart.destroy();
+            radarChart = null;
+        }
+
+        // ================= GET CONTEXT =================
+        const barCtx = document.getElementById("barChart").getContext("2d");
+        const radarCtx = document.getElementById("radarChart").getContext("2d");
+
+        // ================= BAR CHART =================
+        barChart = new Chart(barCtx, {
+            type: "bar",
             data: {
-                labels: labels,
+                labels,
                 datasets: [{
-                    label: 'Attainment %',
+                    label: "CO Attainment %",
                     data: values,
-                    backgroundColor: '#0d6efd',
-                    borderRadius: 6
+                    backgroundColor: "#0d6efd"
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,   
+                maintainAspectRatio: false,
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -212,22 +320,23 @@
             }
         });
 
-        new Chart(document.getElementById('radarChart'), {
-            type: 'radar',
+        // ================= RADAR CHART =================
+        radarChart = new Chart(radarCtx, {
+            type: "radar",
             data: {
-                labels: labels,
+                labels,
                 datasets: [{
-                    label: 'CO Attainment %',
+                    label: "CO Attainment",
                     data: values,
-                    backgroundColor: 'rgba(13,110,253,0.2)',
-                    borderColor: '#0d6efd',
-                    pointBackgroundColor: '#0d6efd',
-                    borderWidth: 2
+                    backgroundColor: "rgba(13,110,253,0.2)",
+                    borderColor: "#0d6efd",
+                    pointBackgroundColor: "#0d6efd",
+                    pointRadius: 4
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,   
+                maintainAspectRatio: false,
                 scales: {
                     r: {
                         beginAtZero: true,
@@ -240,29 +349,20 @@
                 }
             }
         });
-    </script>
+    }
 
-    {% endif %}
+    function clearUI() {
 
-    <div class="mt-4 text-end">
-        <a href="{{ url_for('auth.index') }}" class="btn btn-simple">Back to Dashboard</a>
-    </div>
+        document.getElementById("tableBody").innerHTML =
+            `<tr><td colspan="4" class="text-muted">Select Session & Course</td></tr>`;
 
-</div>
-</div>
+        if (barChart) barChart.destroy();
+        if (radarChart) radarChart.destroy();
 
-<footer class="bg-dark text-light pt-4 pb-3">
-  <div class="container text-center">
-    <h6 class="mb-2">OBE Management System</h6>
-    <p class="small mb-0">
-      CO Attainment analytics dashboard system.
-    </p>
-    <hr class="bg-secondary">
-    <p class="small mb-0">
-      © 2026 OBE System | All Rights Reserved
-    </p>
-  </div>
-</footer>
-
+        barChart = null;
+        radarChart = null;
+    }
+</script>
 </body>
+
 </html>

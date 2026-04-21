@@ -16,6 +16,39 @@
       min-height: 100vh;
     }
 
+    .main-header {
+      background: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      padding: 12px 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .header-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo {
+      height: 45px;
+    }
+
+    .title-box {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 18px;
+      color: #333;
+    }
+
+    .company-name {
+      font-size: 13px;
+      color: #6c757d;
+    }
+
     .content {
       flex: 1;
       display: flex;
@@ -60,6 +93,25 @@
 </head>
 
 <body>
+
+  <div class="main-header">
+    <div class="container header-wrap">
+
+      <div class="d-flex align-items-center gap-2">
+        <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+        <div class="title-box">
+          <div class="header-title">OBE Management System</div>
+          <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+        </div>
+      </div>
+
+      <div class="text-muted small">
+        Course Selection
+      </div>
+
+    </div>
+  </div>
 
 <div class="content">
 

@@ -54,7 +54,7 @@ def register_professor(form):
     db.session.add(new_prof)
     db.session.commit()
 
-    return True, "Professor registered successfully. You can now log in."
+    return True, "Professor registered successfully. They can now log in."
 
 
 

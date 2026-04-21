@@ -16,7 +16,7 @@ def add_course():
 
         result = CourseService.add_course(hod_id, request.form)
 
-        flash(result["message"], result["category"])
+        flash(result["message"], f"course_{result['category']}")
         return redirect(url_for('course_bp.add_course'))
 
     courses = CourseService.get_courses_by_hod(hod_id)

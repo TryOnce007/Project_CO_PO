@@ -48,3 +48,16 @@ def delete_row(table, id):
         flash(message, "danger")
 
     return redirect(url_for('admin.dashboard1', active=table))
+
+
+@admin_bp.route('/privacy')
+def privacy():
+    return render_template('privacy.html')
+
+@admin_bp.route('/terms')
+def terms():
+    return render_template('privacy.html')
+
+@admin_bp.route('/help')
+def help_support():
+    return render_template('privacy.html')

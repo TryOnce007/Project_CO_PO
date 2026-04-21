@@ -17,7 +17,7 @@ class StudentService:
         if not roll_no:
             return False, "Roll number is required!"
 
-        existing = Student.query.filter_by(roll_no=roll_no).first()
+        existing = Student.query.filter_by(roll_no=roll_no, batch_id=batch).first()
         if existing:
             return False, "Student already exists!"
 

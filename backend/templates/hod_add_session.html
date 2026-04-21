@@ -22,6 +22,10 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     }
 
+    .logo {
+    height: 45px;
+}
+
     .header-title {
       font-weight: 600;
       font-size: 18px;
@@ -62,8 +66,16 @@
 
 <div class="main-header">
   <div class="container d-flex justify-content-between align-items-center">
-    <div class="header-title">OBE Management System</div>
-    <div class="small text-muted">Academic Session</div>
+    <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
+
+            </div>
+            <div class="text-muted small">Academic Session</div>
   </div>
 </div>
 

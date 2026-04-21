@@ -102,8 +102,8 @@ class CourseService:
 
         try:
             new_course = Course(
-                name=course_code,
-                code=course_name,
+                name=course_name,
+                code=course_code,
                 branch=hod.branch
             )
 

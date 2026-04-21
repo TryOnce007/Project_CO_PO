@@ -1,11 +1,12 @@
+from backend.models.co import CO
+from backend.models.po import PO
 from backend.models.course import Course
 from backend.models.professor import Professor
 from backend.models.course_assignment import CourseAssignment
-from backend.utils.po_engine import calculate_po_attainment
+from backend.utils.co_po_calculator import calculate_po_stats, calculate_co_stats
 
 
 def get_course_list_for_role(user_id, role):
-
 
     if role == "Faculty":
 
@@ -41,7 +42,11 @@ def get_po_attainment_data(course_id, session_id):
     if not course:
         return None, "Invalid course"
 
-    po_stats = calculate_po_attainment(course_id, session_id)
+    cos = CO.query.filter_by(course_id=course_id).all()
+    co_stats, co_final_scores = calculate_co_stats(cos, session_id)
+
+    pos = PO.query.all()
+    po_stats = calculate_po_stats(pos, co_final_scores)
 
     return {
         "course": course,

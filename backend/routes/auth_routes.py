@@ -90,7 +90,6 @@ def forgot_password():
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 # @limiter.limit("5 per minute")
-
 def login():
 
     if 'user_id' in session:
@@ -103,13 +102,13 @@ def login():
         success, message, redirect_url, user = login_user(request.form)
 
         if not success:
-            flash(message, "danger")
+            flash(message, "login_danger")
             return render_template('login.html')
 
         session['user_id'] = user.id
         session['role'] = user.role
 
-        flash(message, "success")
+        flash(message, "login_success")
         return redirect(redirect_url)
 
     return render_template('login.html')
@@ -135,7 +134,7 @@ def reset_password():
 
         session.pop('reset_user_id', None)
 
-        flash(message, "success")
+        flash(message, "login_success")
         return redirect(url_for('auth.login'))
 
     return render_template('reset_password.html')
@@ -145,7 +144,7 @@ def reset_password():
 def logout():
 
     session.clear()
-    flash("You have been logged out.", "info")
+    flash("You have been logged out.", "login_info")
 
     return redirect(url_for('auth.login'))
 

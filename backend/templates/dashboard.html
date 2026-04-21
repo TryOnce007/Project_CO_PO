@@ -24,6 +24,10 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
 
+        .logo {
+            height: 45px;
+        }
+
         .header-title {
             font-weight: 600;
             font-size: 18px;
@@ -34,23 +38,7 @@
             background: #ffffff;
             border-radius: 16px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-        }
-
-        .inner-padding {
             padding: 20px;
-        }
-
-        .filter-box {
-            background: #ffffff;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-            margin-bottom: 20px;
-        }
-
-        .form-control, .form-select {
-            border-radius: 10px;
-            padding: 8px;
         }
 
         footer {
@@ -61,11 +49,18 @@
 
 <body>
 
-<!-- ✅ HEADER -->
 <div class="main-header">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="header-title">OBE Management System</div>
-        <div class="small text-muted">Dashboard</div>
+    <div class="container d-flex justify-content-between">
+        <div class="d-flex align-items-center gap-2">
+                <img src="{{ url_for('static', filename='logo.png') }}" class="logo">
+
+                <div class="title-box">
+                    <div class="header-title">OBE Management System</div>
+                    <div class="company-name">Bundelkhand Institute of Engineering and Technology</div>
+                </div>
+
+            </div>
+            <div class="text-muted small">Dashboard</div>
     </div>
 </div>
 
@@ -73,15 +68,15 @@
 
     <h3 class="text-center mb-4 fw-bold">CO & PO Attainment Dashboard</h3>
 
-    <!-- FILTERS -->
-    <div class="filter-box">
+    <div class="card-ui mb-4">
+
         <form method="GET" action="{{ url_for('dashboard.dashboard') }}">
             <div class="row g-3">
 
                 {% if role in ["Faculty", "Admin"] %}
-                <div class="col-md-3">
-                    <label class="form-label">Branch</label>
-                    <select name="branch_code" class="form-select" onchange="onBranchChange(this)">
+                <div class="col-md-4">
+                    <label>Branch</label>
+                    <select name="branch_code" class="form-select" onchange="this.form.submit()">
                         <option value="">-- Select Branch --</option>
                         {% for b in branches %}
                         <option value="{{ b }}" {% if selected_branch_code == b %}selected{% endif %}>
@@ -92,9 +87,9 @@
                 </div>
                 {% endif %}
 
-                <div class="col-md-3">
-                    <label class="form-label">Session</label>
-                    <select name="session_id" class="form-select" onchange="onSessionChange(this)">
+                <div class="col-md-4">
+                    <label>Session</label>
+                    <select name="session_id" class="form-select" onchange="this.form.submit()">
                         <option value="">-- Select Session --</option>
                         {% for s in sessions %}
                         <option value="{{ s.id }}" {% if selected_session_id == s.id %}selected{% endif %}>
@@ -104,8 +99,8 @@
                     </select>
                 </div>
 
-                <div class="col-md-3">
-                    <label class="form-label">Course</label>
+                <div class="col-md-4">
+                    <label>Course</label>
                     <select name="course_id" class="form-select" onchange="this.form.submit()">
                         <option value="">-- Select Course --</option>
                         {% for c in courses %}
@@ -118,29 +113,25 @@
 
             </div>
         </form>
+
     </div>
 
-    <!-- CHARTS -->
     <div class="row g-4">
 
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-6">
             <div class="card-ui">
-                <div class="inner-padding">
-                    <h6 class="text-center mb-3">CO Attainment (%)</h6>
-                    <div style="height: 320px;">
-                        <canvas id="coChart"></canvas>
-                    </div>
+                <h6 class="text-center mb-3">CO Attainment (%)</h6>
+                <div style="height: 350px;">
+                    <canvas id="coChart"></canvas>
                 </div>
             </div>
         </div>
 
-        <div class="col-lg-6 col-md-12">
+        <div class="col-lg-6">
             <div class="card-ui">
-                <div class="inner-padding">
-                    <h6 class="text-center mb-3">PO Attainment</h6>
-                    <div style="height: 320px;">
-                        <canvas id="poChart"></canvas>
-                    </div>
+                <h6 class="text-center mb-3">PO Attainment (%)</h6>
+                <div style="height: 350px;">
+                    <canvas id="poChart"></canvas>
                 </div>
             </div>
         </div>
@@ -149,64 +140,37 @@
 
 </div>
 
-<!-- ✅ FOOTER -->
-<footer class="bg-dark text-light pt-4 pb-3">
-  <div class="container text-center">
-
-    <h6 class="mb-2">OBE Management System</h6>
-    <p class="small mb-0">
-      Outcome-Based Education (OBE) Management System for tracking student performance,
-      course outcomes, and academic analytics.
-    </p>
-
-    <hr class="bg-secondary">
-
-    <p class="small mb-0">
-      © 2026 OBE System | All Rights Reserved
-    </p>
-
-  </div>
+<footer class="bg-dark text-light pt-4 pb-3 mt-4">
+    <div class="container text-center">
+        <h6>OBE System</h6>
+        <p class="small mb-0">CO & PO Attainment Dashboard</p>
+    </div>
 </footer>
 
 <script>
 
-// ===== FILTER LOGIC =====
-function onBranchChange(el) {
-    window.location.href = `?branch_code=${el.value}`;
-}
-
-function onSessionChange(el) {
-    const branch = document.querySelector('[name="branch_code"]')?.value || "";
-    window.location.href = `?branch_code=${branch}&session_id=${el.value}`;
-}
-
-// ===== DATA =====
 let coLabels = [];
 let coData = [];
 let poLabels = [];
 let poData = [];
 
-{% if selected_course_id %}
+{% if selected_course_id and selected_session_id %}
 
-// Real data
 coLabels = [{% for c in co_stats %}'CO{{ c.co.id }}',{% endfor %}];
 coData = [{% for c in co_stats %}{{ c.percent }},{% endfor %}];
 
 poLabels = [{% for p in po_stats %}'PO{{ p.po.id }}',{% endfor %}];
-poData = [{% for p in po_stats %}{{ p.avg_level }},{% endfor %}];
+poData = [{% for p in po_stats %}{{ p.percentage }},{% endfor %}];
 
 {% else %}
 
-// Placeholder data
-coLabels = ['CO1','CO2','CO3'];
-coData = [0,0,0];
-
-poLabels = ['PO1','PO2','PO3','PO4'];
-poData = [0,0,0,0];
+coLabels = [];
+coData = [];
+poLabels = [];
+poData = [];
 
 {% endif %}
 
-// ===== CHARTS =====
 new Chart(document.getElementById('coChart'), {
     type: 'bar',
     data: {
@@ -219,7 +183,10 @@ new Chart(document.getElementById('coChart'), {
     },
     options: {
         responsive: true,
-        maintainAspectRatio: false
+        maintainAspectRatio: false,
+        scales: {
+            y: { beginAtZero: true, max: 100 }
+        }
     }
 });
 
@@ -228,17 +195,22 @@ new Chart(document.getElementById('poChart'), {
     data: {
         labels: poLabels,
         datasets: [{
-            label: 'PO Level',
+            label: 'PO Attainment %',
             data: poData,
             backgroundColor: 'rgba(13,110,253,0.2)',
-            borderColor: '#0d6efd'
+            borderColor: '#0d6efd',
+            pointBackgroundColor: '#0d6efd'
         }]
     },
     options: {
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-            r: { min: 0, max: 3 }
+            r: {
+                beginAtZero: true,
+                min: 0,
+                max: 100
+            }
         }
     }
 });
