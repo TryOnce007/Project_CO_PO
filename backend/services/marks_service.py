@@ -1,6 +1,7 @@
+import math
 import pandas as pd
 from backend import db
-from flask import session as flask_session
+from sqlalchemy import select
 from backend.models.student import Student
 from backend.models.marks import Mark
 from backend.models.session import AcademicSession
@@ -15,51 +16,52 @@ from backend.models.branch import Branch
 def safe_float(value):
     try:
         if value in [None, "-", ""]:
-            return 0.0   # or any default you prefer
+            return 0.0   
         return float(value)
     except:
         return 0.0
 
-def get_student_marks_grid_data(batch, branch, co_id, session_id, Student, Mark):
+# def get_student_marks_grid_data(batch, branch, co_id, session_id, Student, Mark):
 
-    students = Student.query.filter(
-        Student.batch_id == batch,
-        Student.branch == branch
-    ).all()
+#     students = Student.query.filter(
+#         Student.batch_id == batch,
+#         Student.branch == branch
+#     ).all()
 
-    student_ids = [s.id for s in students]
+#     student_ids = [s.id for s in students]
 
-    marks = Mark.query.filter(
-        Mark.student_id.in_(student_ids),
-        Mark.co_id == co_id,
-        Mark.session == session_id
-    ).all()
+#     marks = Mark.query.filter(
+#         Mark.student_id.in_(student_ids),
+#         Mark.co_id == co_id,
+#         Mark.session == session_id
+#     ).all()
 
-    marks_map = {m.student_id: m for m in marks}
+#     marks_map = {m.student_id: m for m in marks}
 
-    result = []
+#     result = []
 
-    for s in students:
-        mark = marks_map.get(s.id)
+#     for s in students:
+#         mark = marks_map.get(s.id)
 
-        result.append({
-            "student_id": s.id,
-            "roll_no": s.roll_no,
-            "name": getattr(s, "name", ""),
-            "total": mark.total if mark else "",
-            "obtained": mark.obtained if mark else "",
-            "mark_id": mark.id if mark else None
-        })
+#         result.append({
+#             "student_id": s.id,
+#             "roll_no": s.roll_no,
+#             "name": getattr(s, "name", ""),
+#             "total": mark.total if mark else "",
+#             "obtained": mark.obtained if mark else "",
+#             "mark_id": mark.id if mark else None
+#         })
 
-    return result
+#     return result
 
 
 
 class MarksService:
 
 
+
     @staticmethod
-    def get_student_marks_grid(batch, branch, co_id, session_id):
+    def get_student_marks_grid(batch, branch, co_id, session_id, page=1, per_page=12):
 
         if not batch or not branch or not co_id or not session_id:
             return []
@@ -71,38 +73,70 @@ class MarksService:
         co_id = int(co_id)
         session_id = int(session_id)
 
+        page = max(int(page or 1), 1)
+
+        marks_query = Mark.query.filter(
+            Mark.co_id == co_id,
+            Mark.session == session_id
+        )
+
+        total_marks = marks_query.count()
+
+        if total_marks == 0:
+            return {
+                "data": [],
+                "page": page,
+                "per_page": per_page,
+                "total_pages": 0,
+                "total_students": 0
+            }
+
+        total_pages = math.ceil(total_marks / per_page)
+
+        if page > total_pages:
+            page = total_pages
+
+        offset = (page - 1) * per_page
+
+        marks = marks_query.order_by(Mark.id).offset(offset).limit(per_page).all()
+
+        student_ids = [m.student_id for m in marks]
+
         students = Student.query.filter(
+            Student.id.in_(student_ids),
             Student.batch_id == batch,
             Student.branch == branch
         ).all()
 
-        student_ids = [s.id for s in students]
-
-        marks = Mark.query.filter(
-            Mark.student_id.in_(student_ids),
-            Mark.co_id == co_id,
-            Mark.session == session_id
-        ).all()
-
+        student_map = {s.id: s for s in students}
         marks_map = {m.student_id: m for m in marks}
 
         result = []
 
-        for s in students:
-            mark = marks_map.get(s.id)
+        for m in marks:
+            s = student_map.get(m.student_id)
+
+            if not s:
+                continue
 
             result.append({
                 "student_id": s.id,
                 "roll_no": s.roll_no,
                 "name": getattr(s, "name", ""),
-                "total": mark.total if mark else "",
-                "obtained": mark.obtained if mark else "",
-                "mark_id": mark.id if mark else None,
-                "indirect_total": mark.indirect_total if mark else None,
-                "indirect_obtained": mark.indirect_obtained if mark else None
+                "total": m.total,
+                "obtained": m.obtained,
+                "indirect_total": m.indirect_total,
+                "indirect_obtained": m.indirect_obtained,
+                "mark_id": m.id
             })
 
-        return result
+        return {
+            "data": result,
+            "page": page,
+            "per_page": per_page,
+            "total_pages": total_pages,
+            "total_students": total_marks
+        }
 
 
 
@@ -316,17 +350,15 @@ class MarksService:
 
 
 def get_assigned_courses(faculty_id):
-        assigned_course_ids = (
-            db.session.query(CourseAssignment.course_id)
-            .filter(CourseAssignment.faculty_id == faculty_id)
-            .subquery()
-        )
+    assigned_course_ids = select(CourseAssignment.course_id).where(
+        CourseAssignment.faculty_id == faculty_id
+    )
 
-        courses = Course.query.filter(
-            Course.id.in_(assigned_course_ids)
-        ).all()
+    courses = Course.query.filter(
+        Course.id.in_(assigned_course_ids)
+    ).all()
 
-        return courses
+    return courses
 
 
 def get_static_academic_data():

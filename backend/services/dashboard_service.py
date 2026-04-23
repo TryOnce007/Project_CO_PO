@@ -26,7 +26,7 @@ def get_dashboard_context(user_id, role, args):
 
     if role =="Admin":
         
-        branches = list({c.code for c in Branch.query.all()})
+        branches = Branch.query.all()
         branch_obj = Branch.query.filter_by(code=selected_branch_code).first()
         if branch_obj:
             pos = PO.query.filter_by(branch=branch_obj.code).all()

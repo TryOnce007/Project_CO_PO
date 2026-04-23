@@ -106,14 +106,20 @@ def my_cos():
         return redirect(url_for("auth.login"))
 
     course_id = request.args.get("course_id")
+    page = request.args.get("page", 1)
 
-    cos = get_cos_by_role(
+    result = get_cos_by_role(
         user_id=user_id,
         role=role,
-        course_id=course_id
+        course_id=course_id,
+        page=page,
+        per_page=10
     )
 
     return render_template(
         "my_cos.html",
-        cos=cos
+        cos=result["data"],
+        page=result["page"],
+        total_pages=result["total_pages"],
+        total=result["total"]
     )

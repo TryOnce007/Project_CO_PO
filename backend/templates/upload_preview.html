@@ -226,7 +226,6 @@ function hasDuplicates() {
     return document.querySelectorAll(".duplicate-row").length > 0;
 }
 
-// VALIDATION (unchanged logic)
 function validateRow(row) {
 
   let obtained = parseFloat(row.querySelector('[name^="obtained_"]').value) || 0;
@@ -244,7 +243,6 @@ function validateRow(row) {
   return valid;
 }
 
-// SUBMIT HANDLER
 document.querySelector("form").addEventListener("submit", function(e) {
 
   let rows = document.querySelectorAll("tbody tr");
@@ -263,7 +261,6 @@ document.querySelector("form").addEventListener("submit", function(e) {
     return;
   }
 
-  // 🔥 DUPLICATE CONFIRMATION
   if (hasDuplicates()) {
 
     let confirmUpdate = confirm(

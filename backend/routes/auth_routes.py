@@ -93,7 +93,7 @@ def forgot_password():
 def login():
 
     if 'user_id' in session:
-        if session.get('role') == 'HOD' or 'admin':
+        if session.get('role') in ['HOD', 'Admin']:
             return redirect(url_for('hod_bp.hod_dashboard'))
         return redirect(url_for('auth.professor'))
 
@@ -149,10 +149,16 @@ def logout():
     return redirect(url_for('auth.login'))
 
 
-@auth_bp.errorhandler(429)
-def ratelimit_handler(e):
-    return render_template(
-        "429.html",
-        retry_after=e.description if hasattr(e, "description") else None
-    ), 429
+# @auth_bp.errorhandler(429)
+# def ratelimit_handler(e):
+#     return render_template(
+#         "429.html",
+#         retry_after=e.description if hasattr(e, "description") else None
+#     ), 429
 
+@auth_bp.route('/previous')
+def previous():
+    if 'user_id' in session:
+            if session.get('role') in ['HOD', 'Admin']:
+                return redirect(url_for('hod_bp.hod_dashboard'))
+            return redirect(url_for('auth.professor'))

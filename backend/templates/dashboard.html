@@ -41,6 +41,18 @@
             padding: 20px;
         }
 
+        .btn-simple {
+        border-radius: 10px;
+        padding: 8px 16px;
+        font-weight: 500;
+        background-color: #4d84ba;
+        border: 1px solid #ced4da;
+        }
+
+        .btn-simple:hover {
+        background-color: #cad7e4;
+        }
+
         footer {
             margin-top: auto;
         }
@@ -78,11 +90,14 @@
                     <label>Branch</label>
                     <select name="branch_code" class="form-select" onchange="this.form.submit()">
                         <option value="">-- Select Branch --</option>
+
                         {% for b in branches %}
-                        <option value="{{ b }}" {% if selected_branch_code == b %}selected{% endif %}>
-                            {{ b }}
+                        <option value="{{ b.code }}"
+                            {% if selected_branch_code == b.code %}selected{% endif %}>
+                            {{ b.name }}
                         </option>
                         {% endfor %}
+
                     </select>
                 </div>
                 {% endif %}
@@ -135,16 +150,29 @@
                 </div>
             </div>
         </div>
+        <a href="{{ url_for('auth.previous') }}" class="btn btn-simple">Back to Dashboard</a>
+
 
     </div>
 
 </div>
 
-<footer class="bg-dark text-light pt-4 pb-3 mt-4">
-    <div class="container text-center">
-        <h6>OBE System</h6>
-        <p class="small mb-0">CO & PO Attainment Dashboard</p>
-    </div>
+<footer class="bg-dark text-light pt-4 pb-3">
+  <div class="container text-center">
+
+    <h6 class="mb-2">OBE Management System</h6>
+    <p class="small mb-0">
+      Outcome-Based Education (OBE) Management System for tracking student performance,
+      course outcomes, and academic analytics.
+    </p>
+
+    <hr class="bg-secondary">
+
+    <p class="small mb-0">
+      © 2026 OBE System | All Rights Reserved
+    </p>
+
+  </div>
 </footer>
 
 <script>

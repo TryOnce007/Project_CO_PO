@@ -16,10 +16,15 @@ class Mark(db.Model):
     obtained = db.Column(db.Float, nullable=True)
     total = db.Column(db.Float, nullable=True)
 
-    indirect_obtained = db.Column(db.Float, nullable=False)
-    indirect_total = db.Column(db.Float, nullable=False)
+    indirect_obtained = db.Column(db.Float, nullable=True)
+    indirect_total = db.Column(db.Float, nullable=True)
 
     session = db.Column(db.Integer, db.ForeignKey('academic_sessions.id'))
 
     student = db.relationship('Student', backref='marks')
     co = db.relationship('CO', backref='marks')
+
+
+    __table_args__ = (
+        db.UniqueConstraint('student_id', 'co_id', 'session', name='uq_mark_entry'),
+    )

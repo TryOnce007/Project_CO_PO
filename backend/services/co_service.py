@@ -29,28 +29,54 @@ def get_courses_by_role(user_id, role):
 
 
 
-def get_cos_by_role(user_id, role, course_id=None):
+def get_cos_by_role(user_id, role, course_id=None, page=1, per_page=10):
+
+    page = max(int(page or 1), 1)
 
     if role == 'HOD':
         query = CO.query
         if course_id:
             query = query.filter_by(course_id=course_id)
-        return query.all()
 
-    assigned_course_ids = db.session.query(
-        CourseAssignment.course_id
-    ).filter(
-        CourseAssignment.faculty_id == user_id
-    ).subquery()
+    else:
+        assigned_course_ids = db.session.query(
+            CourseAssignment.course_id
+        ).filter(
+            CourseAssignment.faculty_id == user_id
+        ).subquery()
 
-    query = CO.query.filter(
-        CO.course_id.in_(assigned_course_ids)
-    )
+        query = CO.query.filter(
+            CO.course_id.in_(assigned_course_ids)
+        )
 
-    if course_id:
-        query = query.filter(CO.course_id == course_id)
+        if course_id:
+            query = query.filter(CO.course_id == course_id)
 
-    return query.all()
+    total = query.count()
+    total_pages = (total + per_page - 1) // per_page
+
+    if total_pages == 0:
+        return {
+            "data": [],
+            "page": 1,
+            "total_pages": 0,
+            "total": 0
+        }
+
+    if page > total_pages:
+        page = total_pages
+
+    offset = (page - 1) * per_page
+
+    cos = query.order_by(CO.id).offset(offset).limit(per_page).all()
+
+    return {
+        "data": cos,
+        "page": page,
+        "total_pages": total_pages,
+        "total": total
+    }
+
 
 
 class COService:

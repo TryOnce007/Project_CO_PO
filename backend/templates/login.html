@@ -178,7 +178,9 @@
         <input type="password" class="form-control" name="password" id="password" required>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100 mt-2">Login</button>
+      <button type="submit" id="loginBtn" class="btn btn-primary w-100 mt-2" onclick="disableLoginBtn()">
+          Login
+      </button>
 
     </form>
 
@@ -259,8 +261,14 @@
       return false;
     }
 
+    const btn = document.getElementById("loginBtn");
+    btn.disabled = true;
+    btn.innerText = "Logging in...";
+
     return true;
   }
+
+  
 </script>
 
 </body>

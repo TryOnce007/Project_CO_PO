@@ -110,8 +110,16 @@ def get_student_marks_grid():
     co_id = request.args.get('co_id')
     session_id = request.args.get('session')
 
+    page = request.args.get('page', 1)
+    per_page = request.args.get('per_page', 12)
+
     data = MarksService.get_student_marks_grid(
-        batch, branch, co_id, session_id
+        batch=batch,
+        branch=branch,
+        co_id=co_id,
+        session_id=session_id,
+        page=page,
+        per_page=per_page
     )
 
     return jsonify(data)

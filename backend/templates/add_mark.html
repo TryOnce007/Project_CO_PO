@@ -165,7 +165,6 @@
                     <thead class="table-light">
                         <tr>
                             <th>Roll No</th>
-                            <th>Name</th>
                             <th>Total Direct Marks</th>
                             <th>Obtained Direct Marks</th>
                             <th>Total Indirect Marks</th>
@@ -177,6 +176,24 @@
                 </table>
             </div>
         </div>
+
+        <div class="d-flex justify-content-between align-items-center mt-3">
+
+        <button id="prevBtn" class="btn btn-simple btn-sm" onclick="changePage(-1)">
+            ⬅ Prev
+        </button>
+
+        <div id="paginationInfo" class="fw-semibold text-muted">
+            Page 0 of 0
+        </div>
+
+        <button id="nextBtn" class="btn btn-simple btn-sm" onclick="changePage(1)">
+            Next ➡
+        </button>
+
+</div>
+
+</div>
 
     </div>
 </div>
@@ -200,72 +217,145 @@
 </footer>
 
 <script>
-document.getElementById('courseSelect').addEventListener('change', function () {
-    fetch(`/get_cos?course_id=${this.value}`)
-        .then(res => res.json())
-        .then(data => {
-            const coSelect = document.getElementById('coSelect');
-            coSelect.innerHTML = '<option disabled selected>Select CO</option>';
+    let currentPage = 1;
+    let totalPages = 1;
 
-            data.forEach(co => {
-                coSelect.innerHTML += `<option value="${co.id}">${co.description}</option>`;
+    document.getElementById('courseSelect').addEventListener('change', function () {
+        fetch(`/get_cos?course_id=${this.value}`)
+            .then(res => res.json())
+            .then(data => {
+                const coSelect = document.getElementById('coSelect');
+                coSelect.innerHTML = '<option disabled selected>Select CO</option>';
+
+                data.forEach(co => {
+                    coSelect.innerHTML += `<option value="${co.id}">${co.description}</option>`;
+                });
             });
-        });
-});
+    });
 
-function loadGrid() {
-    const batch = document.getElementById('batchSelect').value;
-    const branch = document.getElementById('branchSelect').value;
-    const co_id = document.getElementById('coSelect').value;
-    const session = document.getElementById('sessionSelect').value;
+    function updatePaginationUI() {
 
-    if (!batch || !branch || !co_id || !session) return;
+        const info = document.getElementById("paginationInfo");
 
-    fetch(`/get_student_marks_grid?batch=${batch}&branch=${branch}&co_id=${co_id}&session=${session}`)
-        .then(res => res.json())
-        .then(data => {
+        if (totalPages === 0) {
+            info.innerText = "No Data";
+        } else {
+            info.innerText = `Page ${currentPage} of ${totalPages}`;
+        }
 
-            const tbody = document.getElementById('studentTableBody');
-            tbody.innerHTML = "";
+        document.getElementById("prevBtn").disabled = (currentPage <= 1);
+        document.getElementById("nextBtn").disabled = (currentPage >= totalPages || totalPages === 0);
+    }
 
-            data.forEach(row => {
+    function loadGrid(page = 1) {
 
-                tbody.innerHTML += `
+        const batch = document.getElementById('batchSelect').value;
+        const branch = document.getElementById('branchSelect').value;
+        const co_id = document.getElementById('coSelect').value;
+        const session = document.getElementById('sessionSelect').value;
+
+        const tbody = document.getElementById('studentTableBody');
+
+        currentPage = page;
+
+        if (!batch || !branch || !co_id || !session) {
+            tbody.innerHTML = `
                 <tr>
-                    <td>${row.roll_no}</td>
-                    <td>${row.name}</td>
-
-                    <!-- Direct -->
-                    <td>
-                        <input type="number" min="0" class="form-control total-${row.student_id}" value="${row.total || ''}">
-                    </td>
-
-                    <td>
-                        <input type="number" min="0" class="form-control obtained-${row.student_id}" value="${row.obtained || ''}">
-                    </td>
-
-                    <!-- Indirect -->
-                    <td>
-                        <input type="number" min="0" class="form-control indirect-total-${row.student_id}" value="${row.indirect_total || ''}">
-                    </td>
-
-                    <td>
-                        <input type="number" min="0" class="form-control indirect-obtained-${row.student_id}" value="${row.indirect_obtained || ''}">
-                    </td>
-
-                    <td>
-                        <button class="btn btn-simple btn-sm"
-                            onclick="saveRow(${row.student_id}, ${row.mark_id || 'null'}, ${co_id}, ${session})">
-                            Save
-                        </button>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Please select Batch, Branch, Course and Session
                     </td>
                 </tr>
-                `;
-            });
-        });
-}
+            `;
 
-function saveRow(student_id, mark_id, co_id, session) {
+            currentPage = 1;
+            totalPages = 0;
+            updatePaginationUI();
+            return;
+        }
+
+        fetch(`/get_student_marks_grid?batch=${batch}&branch=${branch}&co_id=${co_id}&session=${session}&page=${page}`)
+            .then(res => res.json())
+            .then(data => {
+
+                tbody.innerHTML = "";
+
+                const rows = data.data || [];
+
+                if (!rows.length) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="7" class="text-center text-danger fw-semibold py-4">
+                                🚫 No marks data available
+                            </td>
+                        </tr>
+                    `;
+
+                    currentPage = 0;
+                    totalPages = 0;
+                    updatePaginationUI();
+                    return;
+                }
+
+                rows.forEach(row => {
+                    tbody.innerHTML += `
+                    <tr>
+                        <td>${row.roll_no}</td>
+
+                        <td><input type="number" class="form-control total-${row.student_id}" value="${row.total || ''}"></td>
+
+                        <td><input type="number" class="form-control obtained-${row.student_id}" value="${row.obtained || ''}"></td>
+
+                        <td><input type="number" class="form-control indirect-total-${row.student_id}" value="${row.indirect_total || ''}"></td>
+
+                        <td><input type="number" class="form-control indirect-obtained-${row.student_id}" value="${row.indirect_obtained || ''}"></td>
+
+                        <td>
+                            <button class="btn btn-simple btn-sm"
+                                onclick="saveRow(${row.student_id}, ${row.mark_id || 'null'}, ${co_id}, ${session})">
+                                Save
+                            </button>
+                        </td>
+                    </tr>`;
+                });
+
+                currentPage = data.page || 1;
+                totalPages = data.total_pages || 1;
+
+                updatePaginationUI();
+            })
+            .catch(err => {
+                console.error(err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center text-danger">
+                            ⚠️ Error loading data
+                        </td>
+                    </tr>
+                `;
+
+                currentPage = 0;
+                totalPages = 0;
+                updatePaginationUI();
+            });
+    }
+
+    function changePage(step) {
+
+        const batch = document.getElementById('batchSelect').value;
+        const branch = document.getElementById('branchSelect').value;
+        const co_id = document.getElementById('coSelect').value;
+        const session = document.getElementById('sessionSelect').value;
+
+        if (!batch || !branch || !co_id || !session) return;
+
+        const newPage = currentPage + step;
+
+        if (newPage < 1 || newPage > totalPages) return;
+
+        loadGrid(newPage);
+    }
+
+    function saveRow(student_id, mark_id, co_id, session) {
 
     const total = document.querySelector(`.total-${student_id}`).value;
     const obtained = document.querySelector(`.obtained-${student_id}`).value;
@@ -273,53 +363,62 @@ function saveRow(student_id, mark_id, co_id, session) {
     const indirect_total = document.querySelector(`.indirect-total-${student_id}`).value;
     const indirect_obtained = document.querySelector(`.indirect-obtained-${student_id}`).value;
 
-    // Validation
     if (!total || !obtained) {
         alert("Please enter direct marks");
         return;
     }
 
-    if (parseFloat(total) < 0 || parseFloat(indirect_total || 0) < 0) {
-        alert("Total marks cannot be negative");
+    const payload = {
+        student_id,
+        mark_id,
+        co_id,
+        session,
+        total,
+        obtained,
+        indirect_total,
+        indirect_obtained
+    };
+
+    if (!mark_id) {
+
+        fetch('/save_mark_row', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("Saved successfully");
+            loadGrid(currentPage);
+        });
+
         return;
     }
 
-    if (parseFloat(obtained) > parseFloat(total)) {
-        alert("Direct obtained cannot exceed total");
-        return;
-    }
+    const confirmUpdate = confirm(
+        "Marks already exist for this student.\nDo you want to update them?"
+    );
 
-    if (indirect_total && indirect_obtained &&
-        parseFloat(indirect_obtained) > parseFloat(indirect_total)) {
-        alert("Indirect obtained cannot exceed total");
+    if (!confirmUpdate) {
+        loadGrid(currentPage);
         return;
     }
 
     fetch('/save_mark_row', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-            student_id,
-            mark_id,
-            co_id,
-            session,
-            total,
-            obtained,
-            indirect_total,
-            indirect_obtained
-        })
+        body: JSON.stringify(payload)
     })
     .then(res => res.json())
     .then(() => {
-        alert("Saved successfully");
-        loadGrid();
+        alert("Marks updated successfully");
+        loadGrid(currentPage);
     });
 }
-
-document.getElementById('batchSelect').addEventListener('change', loadGrid);
-document.getElementById('branchSelect').addEventListener('change', loadGrid);
-document.getElementById('coSelect').addEventListener('change', loadGrid);
-document.getElementById('sessionSelect').addEventListener('change', loadGrid);
+    document.getElementById('batchSelect').addEventListener('change', () => loadGrid(1));
+    document.getElementById('branchSelect').addEventListener('change', () => loadGrid(1));
+    document.getElementById('coSelect').addEventListener('change', () => loadGrid(1));
+    document.getElementById('sessionSelect').addEventListener('change', () => loadGrid(1));
 </script>
 
 </body>
